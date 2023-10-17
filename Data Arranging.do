@@ -2,12 +2,14 @@
 *
 * Title: Data Management Working Example 10_2_2023
 * Authors: April Athnos & Joe Bronstein
-* Date: 10-2-2023
+* Last Updated: 10-13-2023
 * Objective: to demonstrate one method of formatting raw data into useable form
 * 
 **************************************************************************
 
-
+**************************************************************************
+* 0 - Importing Data to Directory
+**************************************************************************
 
 di c(hostname) 
 
@@ -91,128 +93,403 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	local y = `y' - 2
 }	
 
+**************************************************************************
+* 1 - Organizing Datasets into a Useable Format 
+**************************************************************************
+
+***************
+* 2001
+***************
+
 // For 2001 data arranging:
+	use "2001\all_tables_2001.dta", clear
 
-use "2001\all_tables_2001.dta", clear
+// Dropping values outside the table 
+	drop if _n > 59
 
-drop if _n > 59
+// Renaming Variables based on table names 
+	forval x = 3/15 {
 
-forval x = 4/15 {
-
-	destring v`x', replace force
-
-}
-
-rename v4 ComputerAccess1997
-rename v5 ComputerAccess1999
-rename v6 ComputerAccess2001
-
-rename v7 OwnOrLeaseComputers1997
-rename v8 OwnOrLeaseComputers1999
-rename v9 OwnOrLeaseComputers2001
-
-rename v10 ComputersForFarmBusiness1997
-rename v11 ComputersForFarmBusiness1999
-rename v12 ComputersForFarmBusiness2001
-
-rename v13 InternetAccess1997
-rename v14 InternetAccess1999
-rename v15 InternetAccess2001
-
-drop if _n < 15
-drop v1 v2
-
-
-forval x = 1/5 {
-
-replace v3 = subinstr(v3, "`x'/", "",.)
+		destring v`x', replace force
 
 }
 
-foreach c in rtrim ltrim {
+	rename v4 ComputerAccess1997
+	rename v5 ComputerAccess1999
+	rename v6 ComputerAccess2001
 
-	replace v3 = `c'(v3)
+	rename v7 OwnOrLeaseComputers1997
+	rename v8 OwnOrLeaseComputers1999
+	rename v9 OwnOrLeaseComputers2001
+
+	rename v10 ComputersForFarmBusiness1997
+	rename v11 ComputersForFarmBusiness1999
+	rename v12 ComputersForFarmBusiness2001
+
+	rename v13 InternetAccess1997
+	rename v14 InternetAccess1999
+	rename v15 InternetAccess2001
+
+// Dropping values outisde dataset and not needed variables 
+	drop if _n < 15
+	drop v1 v2
+
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+}
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
+	
+	}
+
+// Changing character length of variables
+	drop if strlen(v3) == 0 | strlen(v3) > 3	
+
+	reshape long ComputerAccess, i(v3) j(year)	
+	
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in OwnOrLeaseComputers ComputersForFarmBusiness InternetAccess {
+
+	gen `g' = `g'1997 
+
+		foreach n in 1999 2001 {
+
+		replace `g' =  `g'`n' if year == `n'
 	
 	}
 	
-drop if strlen(v3) == 0 | strlen(v3) > 3	
-
-reshape long ComputerAccess, i(v3) j(year)	
-
-rename v3 state
-
-foreach g in OwnOrLeaseComputers ComputersForFarmBusiness InternetAccess {
-
-gen `g' = `g'1997 
-
-	foreach n in 1999 2001 {
-
-	replace `g' =  `g'`n' if year == `n'
-	
 	}
+// Keep variables of interest
+	keep state year ComputerAccess OwnOrLeaseComputers ComputersForFarmBusiness InternetAccess	
 	
-	}
-	
-keep state year ComputerAccess OwnOrLeaseComputers ComputersForFarmBusiness InternetAccess	
-	
-// Repeating this for every year
+// Repeat this for every year
 
+**************************************************************************
+***************
+* 2003
+***************
 // For 2003 Data Arranging:
-use "2003\all_tables_2003.dta", clear
+	use "2003\all_tables_2003.dta", clear
 
 // To get comp access and own/lease %'s
+	drop if _n > 58
 
-drop if _n > 58
+// Renaming Variables
+	forval x = 4/11 {
 
-forval x = 4/11 {
+		destring v`x', replace force
 
-	destring v`x', replace force
+}
+	
+	rename v4 ComputerAccess1997
+	rename v5 ComputerAccess1999
+	rename v6 ComputerAccess2001
+	rename v7 ComputerAccess2003
+
+	rename v8 OwnOrLeaseComputers1997
+	rename v9 OwnOrLeaseComputers1999
+	rename v10 OwnOrLeaseComputers2001
+	rename v11 OwnOrLeaseComputers2003
+
+// Dropping values outisde dataset
+	drop if _n < 14
+	drop v1 v2
+
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
 
 }
 
-rename v4 ComputerAccess1997
-rename v5 ComputerAccess1999
-rename v6 ComputerAccess2001
-rename v7 ComputerAccess2003
+	foreach c in rtrim ltrim {
 
-rename v8 OwnOrLeaseComputers1997
-rename v9 OwnOrLeaseComputers1999
-rename v10 OwnOrLeaseComputers2001
-rename v11 OwnOrLeaseComputers2003
+		replace v3 = `c'(v3)
+	
+	}
+// Changing character length of variables	
+	drop if strlen(v3) == 0 | strlen(v3) > 3	
 
-drop if _n < 14
-drop v1 v2
+	reshape long ComputerAccess, i(v3) j(year)	
+
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in OwnOrLeaseComputers {
+
+	gen `g' = `g'1997 
+
+		foreach n in 1999 2001 2003 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+	}
+	
+	}
+// Keep variables of interest	
+	keep state year ComputerAccess OwnOrLeaseComputers
+// Gives us dataset with ComputerAccess and OwnOrLeaseComputers for 2003
+
+// To get farm business and internet access
+	use "2003\all_tables_2003.dta", clear
+
+// Dropping values outisde dataset
+	drop if _n > 114
+
+// Renaming Variables
+	forval x = 3/11 {
+
+		destring v`x', replace force
+
+}
+	
+	rename v4 ComputersForFarmBusiness1997
+	rename v5 ComputersForFarmBusiness1999
+	rename v6 ComputersForFarmBusiness2001
+	rename v7 ComputersForFarmBusiness2003
+
+	rename v8 InternetAccess1997
+	rename v9 InternetAccess1999
+	rename v10 InternetAccess2001
+	rename v11 InternetAccess2003
+
+// Dropping values outisde dataset
+	drop if _n < 70
+	drop v1 v2
 
 
-forval x = 1/5 {
+	forval x = 1/5 {
 
-replace v3 = subinstr(v3, "`x'/", "",.)
+	replace v3 = subinstr(v3, "`x'/", "",.)
 
 }
 
-foreach c in rtrim ltrim {
+	foreach c in rtrim ltrim {
 
-	replace v3 = `c'(v3)
+		replace v3 = `c'(v3)
+	
+	}
+// Changing character length of variables	
+	drop if strlen(v3) == 0 | strlen(v3) > 3	
+
+	reshape long ComputersForFarmBusiness, i(v3) j(year)	
+	
+	rename v3 state
+
+// Getting obs for each year for each state
+	foreach g in InternetAccess {
+
+	gen `g' = `g'1997 
+
+		foreach n in 1999 2001 2003 {
+
+		replace `g' =  `g'`n' if year == `n'
 	
 	}
 	
-drop if strlen(v3) == 0 | strlen(v3) > 3	
+	}
+// Keep variables of interest	
+	keep state year ComputersForFarmBusiness InternetAccess
+// Now just need to merge the 2 2003 datasets
 
-reshape long ComputerAccess, i(v3) j(year)	
+**************************************************************************
+***************
+* 2009
+***************
+// For 2009 Dataset:
+// (Because it already includes data from 2005 and 2007 as well)
+	use "2009\all_tables_2009.dta", clear
 
-rename v3 state
+// Dropping values outisde dataset
+	drop if _n > 63
 
-foreach g in OwnOrLeaseComputers {
+// Renaming Variables
+	forval x = 4/9 {
 
-gen `g' = `g'1997 
+		destring v`x', replace force
 
-	foreach n in 1999 2001 2003 {
+}
+	
+	rename v4 ComputerAccess2005
+	rename v5 ComputerAccess2007
+	rename v6 ComputerAccess2009
+	
+	rename v7 OwnOrLeaseComputers2005
+	rename v8 OwnOrLeaseComputers2007
+	rename v9 OwnOrLeaseComputers2009
 
-	replace `g' =  `g'`n' if year == `n'
+// Dropping values outisde dataset
+	drop if _n < 13
+	drop v1 v2
+
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+}
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
 	
 	}
 	
-	}
-	
-keep state year ComputerAccess OwnOrLeaseComputers
+	drop if strlen(v3) == 0 | strlen(v3) > 3	
 
+	reshape long ComputerAccess, i(v3) j(year)	
+
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in OwnOrLeaseComputers {
+
+	gen `g' = `g'2005 
+
+		foreach n in 2007 2009 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+		}
+	
+		}
+	
+// Keep variables of interest	
+	keep state year ComputerAccess OwnOrLeaseComputers
+// Now have 2009 dataset for computeraccess and own/lease
+
+// Next need to make a dataset for farm business and internet access
+	use "2009\all_tables_2009.dta", clear
+
+// Dropping values outisde dataset
+	drop if _n > 123
+
+// Renaming Variables
+	forval x = 4/9 {
+
+		destring v`x', replace force
+
+}
+	
+	rename v4 ComputersForFarmBusiness2005
+	rename v5 ComputersForFarmBusiness2007
+	rename v6 ComputersForFarmBusiness2009
+	
+	rename v7 InternetAccess2005
+	rename v8 InternetAccess2007
+	rename v9 InternetAccess2009
+
+// Dropping values outisde dataset
+	drop if _n < 73
+	drop v1 v2
+
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+}
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
+	
+	}
+// Reformatting variables	
+	drop if strlen(v3) == 0 | strlen(v3) > 3	
+
+	reshape long ComputersForFarmBusiness, i(v3) j(year)	
+	
+// Renaming state variable
+	rename v3 state
+
+// Getting obs for each year for each state
+	foreach g in InternetAccess {
+
+	gen `g' = `g'2005 
+
+		foreach n in 2007 2009 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+		}
+	
+		}
+	
+// Keep variables of interest	
+	keep state year ComputersForFarmBusiness InternetAccess
+// Now have 2009 dataset for ComputersForFarmBusiness and internet access, 
+// can merge with previous dataset for total 2009
+
+**************************************************************************
+***************
+* 2015
+***************
+// For 2015 Dataset:
+// (Because it already includes data from 2011 and 2013 as well)
+	use "2015\all_tables_2015.dta", clear
+
+// Dropping values outisde dataset
+	drop if _n > 62
+
+// Renaming Variables
+	forval x = 4/9 {
+
+		destring v`x', replace force
+
+}
+	
+	rename v4 ComputerAccess2011
+	rename v5 ComputerAccess2013
+	rename v6 ComputerAccess2015
+	
+	rename v7 OwnOrLeaseComputers2011
+	rename v8 OwnOrLeaseComputers2013
+	rename v9 OwnOrLeaseComputers2015
+
+// Dropping values outisde dataset
+	drop if _n < 12
+	drop v1 v2
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+}
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
+	
+	}
+// ISSUE BEGINS HERE:	
+	drop if strlen(v3) == 0 | strlen(v3) > 3	
+
+	reshape long ComputerAccess, i(v3) j(year)	
+
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in OwnOrLeaseComputers {
+
+	gen `g' = `g'2011 
+
+		foreach n in 2013 2015 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+		}
+	
+		}
+	
+// Keep variables of interest	
+	keep state year ComputerAccess OwnOrLeaseComputers
+	
+// Now have 2015 dataset for computer access and own/lease
