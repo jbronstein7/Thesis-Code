@@ -172,6 +172,9 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 // Keep variables of interest
 	keep state year ComputerAccess OwnOrLeaseComputers ComputersForFarmBusiness InternetAccess	
 	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2001.dta", replace 
+	
 // Repeat this for every year
 
 **************************************************************************
@@ -238,6 +241,10 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	}
 // Keep variables of interest	
 	keep state year ComputerAccess OwnOrLeaseComputers
+	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2003.dta", replace 
+	
 // Gives us dataset with ComputerAccess and OwnOrLeaseComputers for 2003
 **************************************************************************
 // To get farm business and internet access
@@ -300,6 +307,10 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	}
 // Keep variables of interest	
 	keep state year ComputersForFarmBusiness InternetAccess
+	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2003_2.dta", replace 
+	
 // Now just need to merge the 2 2003 datasets
 
 **************************************************************************
@@ -366,6 +377,10 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	
 // Keep variables of interest	
 	keep state year ComputerAccess OwnOrLeaseComputers
+	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2009.dta", replace 
+	
 // Now have 2009 dataset for computeraccess and own/lease
 **************************************************************************
 // Next need to make a dataset for farm business and internet access
@@ -428,6 +443,10 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	
 // Keep variables of interest	
 	keep state year ComputersForFarmBusiness InternetAccess
+	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2009_2.dta", replace 
+	
 // Now have 2009 dataset for ComputersForFarmBusiness and internet access, 
 // can merge with previous dataset for total 2009
 
@@ -522,6 +541,9 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 // Keep variables of interest	
 	keep state year ComputerAccess OwnOrLeaseComputers
 	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2015.dta", replace 
+	
 // Now have 2015 dataset for computer access and own/lease
 **************************************************************************
 // To get 2015 dataset for ComputersForFarmBusiness InternetAccess:
@@ -611,5 +633,414 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 // Keep variables of interest	
 	keep state year ComputersForFarmBusiness InternetAccess
 	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2015_2.dta", replace 
+	
 // Now have 2015 dataset for ComputersForFarmBusiness and InternetAccess
 **************************************************************************
+***************
+* 2019
+***************
+// For 2019 Dataset:
+// (Because it already includes data from 2017 as well)
+	use "2019\all_tables_2019.dta", clear
+
+// Dropping values outisde dataset
+	drop if _n > 58
+
+// Renaming Variables
+	forval x = 4/7 {
+
+		destring v`x', replace force
+
+}
+	
+	rename v4 ComputerAccess2017
+	rename v5 ComputerAccess2019
+	
+	rename v6 OwnOrLeaseComputers2017
+	rename v7 OwnOrLeaseComputers2019
+
+// Dropping values outisde dataset
+	drop if _n < 13
+	drop v1 v2
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+	}
+
+	drop if strlen(v3) == 0
+	drop if _n > 42
+
+	foreach x in ltrim rtrim {
+
+	replace v3 = `x'(v3)
+
+	}
+
+// ISSUE HERE:
+	rename v3 state
+	destring state_name, replace
+	statastates, name(state)
+
+	keep if _merge == 3 | state == "UNITED STATES"
+
+	sort -_merge state
+
+	drop state
+	rename state_abbrev state
+	order state
+
+	sort state
+	drop v10 v11 v12 state_fips _merge
+
+
+
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
+	
+	}
+	
+// Transposing observations
+	reshape long ComputerAccess, i(v3) j(year)	
+
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in OwnOrLeaseComputers {
+
+	gen `g' = `g'2017 
+
+		foreach n in 2019 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+		}
+	
+		}
+	
+// Keep variables of interest	
+	keep state year ComputerAccess OwnOrLeaseComputers
+	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2019.dta", replace 
+	
+// Now have 2019 dataset for computer access and own/lease
+**************************************************************************
+// To get 2019 dataset for ComputersForFarmBusiness InternetAccess:
+// (Because it already includes data from 2017 and 2019 as well)
+	use "2019\all_tables_2019.dta", clear
+
+// Dropping values outisde dataset
+	drop if _n > 118
+
+// Renaming Variables
+	forval x = 4/9 {
+
+		destring v`x', replace force
+
+}
+	
+	rename v4 ComputersForFarmBusiness2017
+	rename v5 ComputersForFarmBusiness2019
+	
+	rename v6 SmartPhoneTabletFarmBusiness2017
+	rename v7 SmartPhoneTabletFarmBusiness2019
+	
+	rename v8 InternetAccess2017
+	rename v9 InternetAccess2019
+
+// Dropping values outisde dataset
+	drop if _n < 73
+	drop v1 v2
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+	}
+
+	drop if strlen(v3) == 0
+	drop if _n > 42
+
+	foreach x in ltrim rtrim {
+
+	replace v3 = `x'(v3)
+
+	}
+
+// ISSUE HERE:
+	rename v3 state
+	destring state_name, replace
+	statastates, name(state)
+
+	keep if _merge == 3 | state == "UNITED STATES"
+
+	sort -_merge state
+
+	drop state
+	rename state_abbrev state
+	order state
+
+	sort state
+	drop v10 v11 v12 state_fips _merge
+
+
+
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
+	
+	}
+	
+// Transposing observations
+	reshape long ComputersForFarmBusiness, i(v3) j(year)	
+
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in SmartPhoneTabletFarmBusiness InternetAccess {
+
+	gen `g' = `g'2017 
+
+		foreach n in 2019 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+		}
+	
+		}
+	
+// Keep variables of interest	
+	keep state year ComputersForFarmBusiness InternetAccess SmartPhoneTabletFarmBusiness
+	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2019_2.dta", replace 
+	
+// Now have 2015 dataset for ComputersForFarmBusiness, SmartPhoneTabletFarmBusiness, and InternetAccess
+**************************************************************************
+// NOTE: NEED TO CONFIRM HOW TO HANDLE VARIABLES FOR THIS SET
+***************
+* 2023
+***************
+// For 2023 Dataset:
+// (Because it already includes data from 2017 as well)
+	use "2023\all_tables_2023.dta", clear
+
+// Dropping values outisde dataset
+	drop if _n > 58
+
+// Renaming Variables
+	forval x = 4/7 {
+
+		destring v`x', replace force
+
+}
+	
+	rename v4 ComputerAccess2017
+	rename v5 ComputerAccess2019
+	
+	rename v6 OwnOrLeaseComputers2017
+	rename v7 OwnOrLeaseComputers2019
+
+// Dropping values outisde dataset
+	drop if _n < 13
+	drop v1 v2
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+	}
+
+	drop if strlen(v3) == 0
+	drop if _n > 42
+
+	foreach x in ltrim rtrim {
+
+	replace v3 = `x'(v3)
+
+	}
+
+// ISSUE HERE:
+	rename v3 state
+	destring state_name, replace
+	statastates, name(state)
+
+	keep if _merge == 3 | state == "UNITED STATES"
+
+	sort -_merge state
+
+	drop state
+	rename state_abbrev state
+	order state
+
+	sort state
+	drop v10 v11 v12 state_fips _merge
+
+
+
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
+	
+	}
+	
+// Transposing observations
+	reshape long ComputerAccess, i(v3) j(year)	
+
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in OwnOrLeaseComputers {
+
+	gen `g' = `g'2021 
+
+		foreach n in 2023 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+		}
+	
+		}
+	
+// Keep variables of interest	
+	keep state year ComputerAccess OwnOrLeaseComputers
+
+// Save dataset
+	save "Clean(ish) Datasets\clean_2023.dta", replace
+	
+// Now have 2023 dataset for computer access and own/lease
+**************************************************************************
+// To get 2019 dataset for ComputersForFarmBusiness InternetAccess:
+// (Because it already includes data from 2017 and 2019 as well)
+	use "2019\all_tables_2019.dta", clear
+
+// Dropping values outisde dataset
+	drop if _n > 118
+
+// Renaming Variables
+	forval x = 4/9 {
+
+		destring v`x', replace force
+
+}
+	
+	rename v4 ComputersForFarmBusiness2017
+	rename v5 ComputersForFarmBusiness2019
+	
+	rename v6 SmartPhoneTabletFarmBusiness2017
+	rename v7 SmartPhoneTabletFarmBusiness2019
+	
+	rename v8 InternetAccess2017
+	rename v9 InternetAccess2019
+
+// Dropping values outisde dataset
+	drop if _n < 73
+	drop v1 v2
+
+	forval x = 1/5 {
+
+	replace v3 = subinstr(v3, "`x'/", "",.)
+
+	}
+
+	drop if strlen(v3) == 0
+	drop if _n > 42
+
+	foreach x in ltrim rtrim {
+
+	replace v3 = `x'(v3)
+
+	}
+
+// ISSUE HERE:
+	rename v3 state
+	destring state_name, replace
+	statastates, name(state)
+
+	keep if _merge == 3 | state == "UNITED STATES"
+
+	sort -_merge state
+
+	drop state
+	rename state_abbrev state
+	order state
+
+	sort state
+	drop v10 v11 v12 state_fips _merge
+
+
+
+
+	foreach c in rtrim ltrim {
+
+		replace v3 = `c'(v3)
+	
+	}
+	
+// Transposing observations
+	reshape long ComputersForFarmBusiness, i(v3) j(year)	
+
+	rename v3 state
+	
+// Getting obs for each year for each state
+	foreach g in SmartPhoneTabletFarmBusiness InternetAccess {
+
+	gen `g' = `g'2021 
+
+		foreach n in 2023 {
+
+		replace `g' =  `g'`n' if year == `n'
+	
+		}
+	
+		}
+	
+// Keep variables of interest	
+	keep state year ComputersForFarmBusiness InternetAccess SmartPhoneTabletFarmBusiness
+	
+// Save dataset
+	save "Clean(ish) Datasets\clean_2023_2.dta", replace 
+	
+// Now have 2023 dataset for ComputersForFarmBusiness, SmartPhoneTabletFarmBusiness, and InternetAccess
+
+**************************************************************************
+* 2 - Appending and Merging datasets to create one large one for all years
+**************************************************************************
+// For data sets clean_year: 
+// Load first dataset
+	use "Clean(ish) Datasets\clean_2001.dta", clear
+	
+// Append with sets of same variables for other years
+	append using "Clean(ish) Datasets\clean_2003.dta"
+	append using "Clean(ish) Datasets\clean_2009.dta"
+	append using "Clean(ish) Datasets\clean_2015.dta"
+	append using "Clean(ish) Datasets\clean_2019.dta", force
+
+// Save appended dataset
+	save "Clean(ish) Datasets\clean_appended.dta", replace
+**************************************************************************
+// For data sets clean_year_2: 
+// Load first dataset
+	use "Clean(ish) Datasets\clean_2003_2.dta", clear
+	
+// Append with sets of same variables for other years
+	append using "Clean(ish) Datasets\clean_2009_2.dta"
+	append using "Clean(ish) Datasets\clean_2015_2.dta"
+	append using "Clean(ish) Datasets\clean_2019_2.dta", force
+
+// Save appended dataset
+	save "Clean(ish) Datasets\clean_appended_2.dta", replace
+	
+// Convert full state names to two-letter postal abbreviations
+
+
+// Now need to merge both appended sets; will get aggregate set for all years
+
