@@ -588,8 +588,8 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	}
 
 // ISSUE HERE:
+	gen state = substr(state, 1,20)
 	rename v3 state
-	destring state_name, replace
 	statastates, name(state)
 
 	keep if _merge == 3 | state == "UNITED STATES"
@@ -597,7 +597,7 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	sort -_merge state
 
 	drop state
-	rename state_abbrev state
+	rename state_name state
 	order state
 
 	sort state
@@ -680,21 +680,16 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 
 	}
 
-// ISSUE HERE:
-	rename v3 state
-	destring state_name, replace
+// Reformatting State Variable:
+	gen state = substr(v3, 1,20)
 	statastates, name(state)
 
 	keep if _merge == 3 | state == "UNITED STATES"
 
-	sort -_merge state
-
-	drop state
-	rename state_abbrev state
-	order state
+	sort _merge state
 
 	sort state
-	drop v10 v11 v12 state_fips _merge
+	drop v8 v9 v10 v11
 
 
 
@@ -707,8 +702,7 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	
 // Transposing observations
 	reshape long ComputerAccess, i(v3) j(year)	
-
-	rename v3 state
+	drop v3
 	
 // Getting obs for each year for each state
 	foreach g in OwnOrLeaseComputers {
@@ -725,6 +719,7 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	
 // Keep variables of interest	
 	keep state year ComputerAccess OwnOrLeaseComputers
+	order state
 	
 // Save dataset
 	save "Clean(ish) Datasets\clean_2019.dta", replace 
@@ -773,21 +768,16 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 
 	}
 
-// ISSUE HERE:
-	rename v3 state
-	destring state_name, replace
+// Reformatting State Variable:
+	gen state = substr(v3, 1,20)
 	statastates, name(state)
 
 	keep if _merge == 3 | state == "UNITED STATES"
 
-	sort -_merge state
-
-	drop state
-	rename state_abbrev state
-	order state
+	sort _merge state
 
 	sort state
-	drop v10 v11 v12 state_fips _merge
+	drop v10 v11
 
 
 
@@ -800,11 +790,10 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	
 // Transposing observations
 	reshape long ComputersForFarmBusiness, i(v3) j(year)	
-
-	rename v3 state
+	drop v3
 	
 // Getting obs for each year for each state
-	foreach g in SmartPhoneTabletFarmBusiness InternetAccess {
+	foreach g in InternetAccess SmartPhoneTabletFarmBusiness {
 
 	gen `g' = `g'2017 
 
@@ -818,6 +807,7 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	
 // Keep variables of interest	
 	keep state year ComputersForFarmBusiness InternetAccess SmartPhoneTabletFarmBusiness
+	order state
 	
 // Save dataset
 	save "Clean(ish) Datasets\clean_2019_2.dta", replace 
@@ -836,17 +826,21 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	drop if _n > 58
 
 // Renaming Variables
-	forval x = 4/7 {
+	forval x = 4/8 {
 
 		destring v`x', replace force
 
 }
 	
-	rename v4 ComputerAccess2017
-	rename v5 ComputerAccess2019
+	rename v4 OwnOrLeaseComputers2021
+	rename v5 OwnOrLeaseComputers2023
 	
-	rename v6 OwnOrLeaseComputers2017
-	rename v7 OwnOrLeaseComputers2019
+	rename v6 SmartPhone2021
+	rename v7 SmartPhone2023
+	
+	rename v8 TabletPortableComp2023
+	
+	
 
 // Dropping values outisde dataset
 	drop if _n < 13
@@ -867,21 +861,18 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 
 	}
 
-// ISSUE HERE:
-	rename v3 state
-	destring state_name, replace
+// Fromatting Data:
+	gen state = substr(v3, 1,20)
 	statastates, name(state)
 
 	keep if _merge == 3 | state == "UNITED STATES"
 
-	sort -_merge state
-
-	drop state
-	rename state_abbrev state
-	order state
+	sort _merge state
 
 	sort state
-	drop v10 v11 v12 state_fips _merge
+	drop v9
+
+
 
 
 
@@ -893,12 +884,12 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	}
 	
 // Transposing observations
-	reshape long ComputerAccess, i(v3) j(year)	
+	reshape long OwnOrLeaseComputers, i(v3) j(year)	
 
-	rename v3 state
+	drop v3
 	
 // Getting obs for each year for each state
-	foreach g in OwnOrLeaseComputers {
+	foreach g in SmartPhone {
 
 	gen `g' = `g'2021 
 
@@ -911,7 +902,8 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 		}
 	
 // Keep variables of interest	
-	keep state year ComputerAccess OwnOrLeaseComputers
+	keep state year OwnOrLeaseComputers SmartPhone 
+	order state
 
 // Save dataset
 	save "Clean(ish) Datasets\clean_2023.dta", replace
@@ -1012,7 +1004,7 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 // Now have 2023 dataset for ComputersForFarmBusiness, SmartPhoneTabletFarmBusiness, and InternetAccess
 
 **************************************************************************
-* 2 - Appending and Merging datasets to create one large one for all years
+* 2 - Appending and Merging datasets to create one large set for all years
 **************************************************************************
 // For data sets clean_year: 
 // Load first dataset
