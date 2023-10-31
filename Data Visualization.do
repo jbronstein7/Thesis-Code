@@ -14,7 +14,7 @@
 di c(hostname) 
 
     if "`c(hostname)'" == "AREC-ATHNOS" {
-            cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein\Code"
+            cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein"
             }
 
 
@@ -25,12 +25,38 @@ di c(hostname)
 // Selecting aggregated dataset
 	use "Clean(ish) Datasets\all_data.dta"
 	
+// Creating new variables for better aggregation
+	gen state_1 = state
+	gen region = ""
+		replace region = "New England" if state == "CT" | state == "ME" | state == "MA" | state == "NH" | state == "RI" | state == "VT"
+		replace region = "Middle Atlantic" if state == "NJ" | state == "NY" | state == "PA"
+		replace region = "East North Central" if state == "IL" | state == "IN" | state == "MI" | state == "OH" | state == "WI"
+		replace region = "West North Central" if state == "IA" | state == "KS" | state == "MN" | state == "MO" | state == "NE" | state == "ND" | state == "SD"
+		replace region = "South Atlantic" if state == "DE" | state == "DC" | state == "FL" | state == "GA" | state == "MD" | state == "NC" | state == "SC" | state == "VA" | state == "WV"
+		replace region = "East South Central" if state == "AL" | state == "KY" | state == "MS" | state == "TN"
+		replace region = "West South Central" if state == "AR" | state == "LA" | state == "OK" | state == "TX"
+		replace region = "Mountain" if state == "AZ" | state == "CO" | state == "ID" | state == "MT" | state == "NV" | state == "NM" | state == "UT" | state == "WY"
+		replace region = "Pacific" if state == "AK" | state == "CA" | state == "HI" | state == "OR" | state == "WA"
+
+// Now combining states that were combined in USDA data to improve comprability 
+	replace state_1 = "CO" if state_1 == "AZ" | state_1 == "NV" | state_1 == "NM" | state_1 == "UT" | state_1 == "WY"
+	replace state_1 = "NH" if state_1 == "CT" | state_1 == "ME" | state_1 == "MA" | state_1 == "RI" | state_1 == "VT"
+	replace state_1 = "PA" if state_1 == "NJ"
+	replace state_1 = "VA" if state_1 == "DE" | state_1 == "MD" | state_1 == "WV"
+
+egen avg_InternetAccess = mean(InternetAccess), by(state_1 year)
+egen avg_OwnOrLeaseComputers = mean(OwnOrLeaseComputers), by(state_1 year)
+
+duplicates report state_1 year
+duplicates drop state_1 year, force
+
+sort state_1 year
 
 **************************************************************************
 * 1 - Graphing Data
 **************************************************************************
 // Graphing OwnOrLeaseComputers by state, with years on the x-axis 
-	twoway (line OwnOrLeaseComputers year), by(state) title("Own or Lease Computers by State") xtitle("Year") ytitle("Own or Lease Computers")
+	twoway (line avg_OwnOrLeaseComputers year), by(state_1) title("Own or Lease Computers by State") xtitle("Year") ytitle("Own or Lease Computers")
 	
 // Exporting Graph
-graph export "own_or_lease_computers.png", replace
+	graph export "own_or_lease_computers.png", replace
