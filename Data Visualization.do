@@ -4,7 +4,7 @@
 * Authors: April Athnos & Joe Bronstein
 * Last Updated: 10-29-2023
 * Objective: To effectively visualize aggregated data
-* 
+* Assumes: Data Arranging do file has already been run
 **************************************************************************
 
 **************************************************************************
@@ -23,7 +23,7 @@ di c(hostname)
             }
 			
 // Selecting aggregated dataset
-	use "Clean(ish) Datasets\all_data.dta"
+	use "Clean(ish) Datasets\all_data.dta", clear
 	
 // Creating new variables for better aggregation
 	gen state_1 = state
@@ -44,19 +44,38 @@ di c(hostname)
 	replace state_1 = "PA" if state_1 == "NJ"
 	replace state_1 = "VA" if state_1 == "DE" | state_1 == "MD" | state_1 == "WV"
 
-egen avg_InternetAccess = mean(InternetAccess), by(state_1 year)
-egen avg_OwnOrLeaseComputers = mean(OwnOrLeaseComputers), by(state_1 year)
-
-duplicates report state_1 year
-duplicates drop state_1 year, force
-
-sort state_1 year
+// Creating new variables to get data aggregated for combined states 
+	egen avg_InternetAccess = mean(InternetAccess), by(state_1 year)
+	egen avg_OwnOrLeaseComputers = mean(OwnOrLeaseComputers), by(state_1 year)
+	
+// Creating new variables to get regional averages for each year 
+	egen reg_avg_InternetAccess = mean(InternetAccess), by(region year)
+	egen reg_avg_OwnOrLeaseComputers = mean(OwnOrLeaseComputers), by(region year)
 
 **************************************************************************
 * 1 - Graphing Data
 **************************************************************************
-// Graphing OwnOrLeaseComputers by state, with years on the x-axis 
-	twoway (line avg_OwnOrLeaseComputers year), by(state_1) title("Own or Lease Computers by State") xtitle("Year") ytitle("Own or Lease Computers")
+// Graphing OwnOrLeaseComputers and InternetAccess by state, with years on the x-axis 
+// Dropping duplicate observations 
+	duplicates report state_1 year
+	duplicates drop state_1 year, force
+	sort state_1 year
+
+// Charting the graph	
+	twoway (line avg_OwnOrLeaseComputers year) (line avg_InternetAccess year), by(state_1) ytitle("Share of Farms") xtitle("Year") xlabel(1997(4)2023) legend(order(1 "Own Or Lease Computers" 2 "Internet Access") position(6) ring(3) rows(1) cols(2))
+
+// Graphing OwnOrLeaseComputers and InternetAccess by region, with years on the x-axis
+
+*RE-RUN LINES 26-53
+
+// For regional level graph:	
+// Dropping duplicate observations 
+	duplicates report region year
+	duplicates drop region year, force
+	sort region year
+ 
+	twoway (line avg_OwnOrLeaseComputers year) (line avg_InternetAccess year), by(region) ytitle("Share of Farms") xtitle("Year") xlabel(1997(4)2023) legend(order(1 "Own Or Lease Computers" 2 "Internet Access") position(6) ring(3) rows(1) cols(2))
+
 	
 // Exporting Graph
 	graph export "own_or_lease_computers.png", replace
