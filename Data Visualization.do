@@ -47,11 +47,13 @@ di c(hostname)
 // Creating new variables to get data aggregated for combined states 
 	egen avg_InternetAccess = mean(InternetAccess), by(state_1 year)
 	egen avg_OwnOrLeaseComputers = mean(OwnOrLeaseComputers), by(state_1 year)
+	egen avg_ComputersForFarmBusiness = mean(ComputersForFarmBusiness), by(state_1 year)
 	
 // Creating new variables to get regional averages for each year 
 	egen reg_avg_InternetAccess = mean(InternetAccess), by(region year)
 	egen reg_avg_OwnOrLeaseComputers = mean(OwnOrLeaseComputers), by(region year)
-
+	egen reg_avg_ComputersForFarmBusiness = mean(ComputersForFarmBusiness), by(region year)
+	
 **************************************************************************
 * 1 - Graphing Data
 **************************************************************************
@@ -76,6 +78,32 @@ di c(hostname)
  
 	twoway (line avg_OwnOrLeaseComputers year) (line avg_InternetAccess year), by(region) ytitle("Share of Farms") xtitle("Year") xlabel(1997(4)2023) legend(order(1 "Own Or Lease Computers" 2 "Internet Access") position(6) ring(3) rows(1) cols(2))
 
+// Graphing OwnOrLeaseComputers and ComputersForFarmBusiness by state, with years on the x-axis
+
+*RE-RUN LINES 26-53
+
+// Drop missing values 
+	drop if missing(avg_ComputersForFarmBusiness)
+
+// Dropping duplicate observations 
+	duplicates report state_1 year
+	duplicates drop state_1 year, force
+	sort state_1 year
+ 
+	twoway (line avg_OwnOrLeaseComputers year) (line avg_ComputersForFarmBusiness year), by(state_1) ytitle("Share of Farms") xtitle("Year") xlabel(1997(4)2023) legend(order(1 "Own Or Lease Computers" 2 "Computers For Farm Business") position(6) ring(3) rows(1) cols(2))
 	
-// Exporting Graph
-	graph export "own_or_lease_computers.png", replace
+// For Regional Level:
+
+*RE-RUN LINES 26-53
+
+// Drop missing values 
+	drop if missing(reg_avg_ComputersForFarmBusiness)
+
+// Dropping duplicate observations 
+	duplicates report region year
+	duplicates drop region year, force
+	sort region year
+ 
+	twoway (line reg_avg_OwnOrLeaseComputers year) (line reg_avg_ComputersForFarmBusiness year), by(region) ytitle("Share of Farms") xtitle("Year") xlabel(1997(4)2023) legend(order(1 "Own Or Lease Computers" 2 "Computers For Farm Business") position(6) ring(3) rows(1) cols(2))
+	
+
