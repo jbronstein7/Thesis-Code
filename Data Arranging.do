@@ -111,7 +111,7 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	drop if _n > 59
 
 // Renaming Variables based on table names 
-	forval x = 3/15 {
+	forval x = 4/15 {
 
 		destring v`x', replace force
 
@@ -1067,8 +1067,22 @@ foreach x in 	"https://downloads.usda.library.cornell.edu/usda-esmis/files/h128n
 	append using "Clean(ish) Datasets\2015.dta"
 	append using "Clean(ish) Datasets\2019.dta"
 	append using "Clean(ish) Datasets\2023.dta"
-	
+
+// Add region variable 
+	gen region = ""
+		replace region = "New England" if state == "CT" | state == "ME" | state == "MA" | state == "NH" | state == "RI" | state == "VT"
+		replace region = "Middle Atlantic" if state == "NJ" | state == "NY" | state == "PA"
+		replace region = "East North Central" if state == "IL" | state == "IN" | state == "MI" | state == "OH" | state == "WI"
+		replace region = "West North Central" if state == "IA" | state == "KS" | state == "MN" | state == "MO" | state == "NE" | state == "ND" | state == "SD"
+		replace region = "South Atlantic" if state == "DE" | state == "DC" | state == "FL" | state == "GA" | state == "MD" | state == "NC" | state == "SC" | state == "VA" | state == "WV"
+		replace region = "East South Central" if state == "AL" | state == "KY" | state == "MS" | state == "TN"
+		replace region = "West South Central" if state == "AR" | state == "LA" | state == "OK" | state == "TX"
+		replace region = "Mountain" if state == "AZ" | state == "CO" | state == "ID" | state == "MT" | state == "NV" | state == "NM" | state == "UT" | state == "WY"
+		replace region = "Pacific" if state == "AK" | state == "CA" | state == "HI" | state == "OR" | state == "WA"
+
+// Sorting and ordering variables
 	sort state year 
+	order state region year
 
 // Save appended dataset
 	save "Clean(ish) Datasets\all_data.dta", replace
