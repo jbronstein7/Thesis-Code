@@ -112,4 +112,75 @@
 
 // Saving 
 	sort state year
-	save "clean_age.dta", replace
+	save "clean_EthnicityGender.dta", replace
+	
+*************************************
+* Acres Operated
+*************************************
+// Importing first Age dataset
+	import delimited "1997_2017_AcresOperated.csv", clear 
+	save "1997_2017_AcresOperated.dta", replace
+
+// Formatting state variable to get abbreviation
+	statastates, name(state)
+	
+// Changing state to str# for merging purposes
+	gen str20 state_str = state_abbrev
+	keep year value state_str domaincategory
+	rename state_str state
+	order state year domaincategory value 
+
+// Changing value to avg age
+	rename value TotalAcres 
+	sort state year
+	save "clean_Acres.dta", replace
+	
+*************************************
+* Crop Operations 
+*************************************
+// Importing first Age dataset
+	import delimited "1997_2017_CropOperations.csv", clear 
+	save "1997_2017_CropOperations.dta", replace
+
+// Formatting state variable to get abbreviation
+	statastates, name(state)
+	
+// Changing state to str# for merging purposes
+	gen str20 state_str = state_abbrev
+	keep year value state_str
+	rename state_str state
+	order state year value 
+
+// Changing value to avg age
+	rename value NumCrop
+	sort state year
+	save "clean_Crop.dta", replace
+	
+*************************************
+* Income Per Operation
+*************************************
+// Importing first Age dataset
+	import delimited "1997_2017_FarmIncomePerOper.csv", clear 
+	save "1997_2017_FarmIncomePerOper.dta", replace
+
+// Formatting state variable to get abbreviation
+	statastates, name(state)
+	
+// Changing state to str# for merging purposes
+	gen str20 state_str = state_abbrev
+	keep year value state_str
+	rename state_str state
+	order state year value 
+
+// Changing value to avg age
+	rename value IncomePerOperation
+	sort state year
+	save "clean_income.dta", replace
+	
+
+
+	
+	
+	
+	
+	
