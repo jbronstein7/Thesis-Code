@@ -72,7 +72,7 @@
 *************************************
 * Ethnicity and Gender 
 *************************************
-// Importing first Age dataset
+// Importing first dataset
 	import delimited "1997_2012_EthnicityGender.csv", clear 
 	save "1997_2012_EthnicityGender.dta", replace
 
@@ -117,7 +117,7 @@
 *************************************
 * Acres Operated
 *************************************
-// Importing first Age dataset
+// Importing first dataset
 	import delimited "1997_2017_AcresOperated.csv", clear 
 	save "1997_2017_AcresOperated.dta", replace
 
@@ -130,7 +130,7 @@
 	rename state_str state
 	order state year domaincategory value 
 
-// Changing value to avg age
+// Changing value
 	rename value TotalAcres 
 	sort state year
 	save "clean_Acres.dta", replace
@@ -138,7 +138,7 @@
 *************************************
 * Crop Operations 
 *************************************
-// Importing first Age dataset
+// Importing first dataset
 	import delimited "1997_2017_CropOperations.csv", clear 
 	save "1997_2017_CropOperations.dta", replace
 
@@ -151,7 +151,7 @@
 	rename state_str state
 	order state year value 
 
-// Changing value to avg age
+// Changing value
 	rename value NumCrop
 	sort state year
 	save "clean_Crop.dta", replace
@@ -159,7 +159,7 @@
 *************************************
 * Income Per Operation
 *************************************
-// Importing first Age dataset
+// Importing first dataset
 	import delimited "1997_2017_FarmIncomePerOper.csv", clear 
 	save "1997_2017_FarmIncomePerOper.dta", replace
 
@@ -172,13 +172,107 @@
 	rename state_str state
 	order state year value 
 
-// Changing value to avg age
+// Changing value
 	rename value IncomePerOperation
 	sort state year
 	save "clean_income.dta", replace
 	
+*************************************
+* Total Operations
+*************************************
+// Importing first dataset
+	import delimited "1997_2017_AcresOperated.csv", clear 
+	save "1997_2017_AcresOperated.dta", replace
+
+// Formatting state variable to get abbreviation
+	statastates, name(state)
+	
+// Changing state to str# for merging purposes
+	gen str20 state_str = state_abbrev
+	keep year value state_str domaincategory
+	rename state_str state
+	order state year domaincategory value 
+
+// Changing value
+	rename value TotalOperations 
+	sort state year
+	save "clean_operations.dta", replace
+
+*************************************
+* Poultry Operations
+*************************************
+// Importing first dataset
+	import delimited "1997_2017_PoultryOperations.csv", clear 
+	save "1997_2017_PoultryOperations.dta", replace
+
+// Formatting state variable to get abbreviation
+	statastates, name(state)
+	
+// Changing state to str# for merging purposes
+	gen str20 state_str = state_abbrev
+	keep year value state_str
+	rename state_str state
+	order state year value 
+
+// Changing value
+	rename value NumPoultry
+	sort state year
+	save "clean_poultry.dta", replace
+	
+*************************************
+* Off Farm Occupation
+*************************************
+// Importing first dataset
+	import delimited "1997_2017_PrimaryOccOffFarm.csv", clear 
+	save "1997_2017_PrimaryOccOffFarm.dta", replace
+
+// Formatting state variable to get abbreviation
+	statastates, name(state)
+	
+// Changing state to str# for merging purposes
+	gen str20 state_str = state_abbrev
+	keep year numprimoff state_str
+	rename state_str state
+	order state year numprimoff 
+
+// Changing value
+	rename numprimoff NumOffFarm
+	sort state year
+	save "clean_OffFarm.dta", replace
+	
+***********************************************
+* Persons in Household and Years on Operation 
+***********************************************
+// Importing first dataset
+	import delimited "2002_2017_PersonsHousehold_YearsOnOperation.csv", clear 
+	save "2002_2017_PersonsHousehold_YearsOnOperation.dta", replace
+
+// Appending datasets and dropping unecessary variables 
+	destring dataitem, replace
+	keep year state dataitem value
+
+// New Variables
+	gen HouseholdSize = value if dataitem == "PRODUCERS, PRINCIPAL - PERSONS IN HOUSEHOLD, MEASURED IN PERSONS" | dataitem == "OPERATORS, PRINCIPAL - PERSONS IN HOUSEHOLD, MEASURED IN PERSONS"
+	gen Experience = value if dataitem == "OPERATORS, PRINCIPAL - YEARS ON ANY OPERATION, AVG, MEASURED IN YEARS" | dataitem == "PRODUCERS, PRINCIPAL - YEARS ON ANY OPERATION, AVG, MEASURED IN YEARS"
+	
+	drop dataitem value 
+	
+// Reshaping dataset		
 
 
+// Formatting state variable to get abbreviation
+	statastates, name(state)
+	
+// Changing state to str# for merging purposes
+	gen str20 state_str = state_abbrev
+	drop state state_abbrev state_fips _merge
+	rename state_str state
+	order state year 
+
+// Saving 
+	sort state year
+	save "clean_HouseSize_Experience.dta", replace
+	
 	
 	
 	
