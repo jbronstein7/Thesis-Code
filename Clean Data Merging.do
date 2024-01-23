@@ -1,21 +1,21 @@
 ********************************************************************************
-* Title: CPI Data Arranging 
+* Title: Clean Data Arranging 
 * Author: Joe Bronstein
-* Purpose: To clean and aggregate Computer CPI data to merge into larger dataset
+* Purpose: To merge cleaned datasets into a larger one 
 * Last Modified: 1/23/2024
-* Assumes: CPI data have been downloaded, and are in a directory 
+* Assumes: Data Arranging file and USDA and CPI cleaning files have been run
 ********************************************************************************
 	di c(hostname) 
 
 		if "`c(hostname)'" == "AREC-ATHNOS" {
-				cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein\Other Raw Data\"
+				cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein\Clean(ish) Datasets"
 				}
 
 
 		if "`c(hostname)'" == "JBRON-DESKTOP" {
-				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data\Other Raw Data"
+				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data\Clean(ish) Datasets"
 				}
 
 *************************************
-* 0. Importing CPI Dataset
+* 1. Starting with USDA NASS data
 *************************************

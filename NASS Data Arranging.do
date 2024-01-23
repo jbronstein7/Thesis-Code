@@ -129,10 +129,25 @@
 	keep year value state_str domaincategory
 	rename state_str state
 	order state year domaincategory value 
-
-// Changing value
-	rename value TotalAcres 
 	sort state year
+
+// Getting numeric values 
+	drop if value == " (D)"
+	destring value, gen(value1) ignore(",")
+	
+// Summing by state year to get totals, instead of break down by category 
+	egen totals = sum (value1), by (state year)
+
+// Dropping unecessary variables
+	keep state year totals
+
+// De-duping 
+	duplicates report state year
+	duplicates drop state year, force
+	
+// Changing value
+	rename totals TotalAcres 
+
 	save "Clean(ish) Datasets/clean_Acres.dta", replace
 	
 *************************************
