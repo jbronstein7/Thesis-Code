@@ -19,3 +19,56 @@
 *************************************
 * 1. Starting with USDA NASS data
 *************************************
+// Selecting acres as first dataset
+	use "clean_acres.dta", clear 
+	
+// Merge the age dataset using state and year
+	merge 1:1 state year using "clean_age.dta"
+	drop _merge
+
+// Merge crop data
+	merge 1:1 state year using "clean_crop.dta"
+	drop _merge
+
+// Merge dairy data
+	merge 1:1 state year using "clean_dairy.dta"
+	drop _merge	
+	sort state year
+
+// Merge ethnicity and gender data
+	merge 1:1 state year using "clean_ethnicitygender.dta"
+	drop _merge	
+	sort state year
+
+// Merge income data
+	merge 1:1 state year using "clean_income.dta"
+	destring IncomePerOperation, replace ignore(",")
+	drop _merge	
+	sort state year
+
+// Merge Off-Farm Labor data
+	merge 1:1 state year using "clean_OffFarm.dta"
+	destring NumOffFarm, replace ignore(",")
+	drop _merge	
+	sort state year
+	
+// Merge operations data
+	merge 1:1 state year using "clean_operations.dta"
+	destring IncomePerOperation, replace ignore(",")
+	drop _merge	
+	sort state year
+	
+// Merge poultry data
+	merge 1:1 state year using "clean_poultry.dta"
+	destring NumPoultry, replace ignore(",")
+	drop _merge	
+	sort state year
+// Now have singular dataset with all USDA NASS data
+
+*************************************
+* 2. Next merging CPI data
+*************************************
+// Merge CPI data*****************************************
+	merge 1:1 year using "clean_CPI.dta"
+	drop _merge	
+	sort state year

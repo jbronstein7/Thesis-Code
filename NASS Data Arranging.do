@@ -2,7 +2,7 @@
 * Title: USDA Data Arranging 
 * Author: Joe Bronstein
 * Purpose: To clean and aggregate USDA NASS data to merge into larger dataset
-* Last Modified: 1/18/2024
+* Last Modified: 1/23/2024
 * Assumes: All USDA NASS files have been downloaded, and are in a directory 
 ********************************************************************************
 	di c(hostname) 
@@ -85,6 +85,7 @@
 	keep if domain == "TOTAL"
 	destring dataitem, replace
 	keep year state dataitem value
+	destring value, replace ignore (",")
 
 // New Variables
 	gen NumAsian = value if dataitem == "PRODUCERS, PRINCIPAL, ASIAN - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, ASIAN - NUMBER OF OPERATIONS"
@@ -99,7 +100,18 @@
 	drop dataitem value 
 	
 // Reshaping dataset		
+	collapse (sum) NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale, by(year state)
 
+// Changing 0's to missings, checked to confirm there are no zeroes in original dataset
+	replace NumAsian = . if NumAsian == 0
+	replace NumAfricanAmerican = . if NumAfricanAmerican == 0
+	replace NumHispanic = . if NumHispanic == 0
+	replace NumMulti = . if NumMulti == 0
+	replace NumPacific = . if NumPacific == 0
+	replace NumWhite = . if NumWhite == 0
+	replace NumMale = . if NumMale == 0
+	replace NumFemale = . if NumFemale == 0
+	
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -165,7 +177,8 @@
 	keep year value state_str
 	rename state_str state
 	order state year value 
-
+	destring value, replace ignore(",")
+	
 // Changing value
 	rename value NumCrop
 	sort state year
@@ -196,8 +209,8 @@
 * Total Operations
 *************************************
 // Importing first dataset
-	import delimited "USDA Raw Datasets/1997_2017_AcresOperated.csv", clear 
-	save "USDA Raw Datasets/1997_2017_AcresOperated.dta", replace
+	import delimited "USDA Raw Datasets/1997_2017_NumOperations.csv", clear 
+	save "USDA Raw Datasets/1997_2017_NumOperations.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -208,9 +221,23 @@
 	rename state_str state
 	order state year domaincategory value 
 
+// Getting numeric values 
+	drop if value == " (D)"
+	destring value, gen(value1) ignore(",")
+	
+// Summing by state year to get totals, instead of break down by category 
+	egen totals = sum (value1), by (state year)
+	
+// Dropping unecessary variables
+	keep state year totals
+
+// De-duping 
+	duplicates report state year
+	duplicates drop state year, force
+	
 // Changing value
-	rename value TotalOperations 
-	sort state year
+	rename totals TotalOperations
+	sort state year 
 	save "Clean(ish) Datasets/clean_operations.dta", replace
 
 *************************************

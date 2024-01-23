@@ -8,12 +8,12 @@
 	di c(hostname) 
 
 		if "`c(hostname)'" == "AREC-ATHNOS" {
-				cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein\Other Raw Data\"
+				cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein"
 				}
 
 
 		if "`c(hostname)'" == "JBRON-DESKTOP" {
-				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data\Other Raw Data"
+				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data"
 				}
 
 *************************************
@@ -21,8 +21,8 @@
 *************************************
 
 // Importing CPI Data
-	import delimited "CPI_Computers_1997_2023.csv", clear 
-	save "CPI_Raw.dta", replace 
+	import delimited "Other Raw Data/CPI_Computers_1997_2023.csv", clear 
+	save "Other Raw Data/CPI_Raw.dta", replace 
 	
 *************************************
 * 1. Re-formatting date 
@@ -39,7 +39,7 @@
 	rename date_str date
 	order date cpi
 	
-	save "CPI_Raw.dta", replace 
+	save "Other Raw Data/CPI_Raw.dta", replace 
 // Now have date formatted properly
 
 *************************************
@@ -56,5 +56,5 @@
 	
 // Now only have obs in June, from 98 to 23
 // Years match data (98-23), so no more needs to be done 
-	save "CPI_Clean.dta", replace 
+	save "Clean(ish) Datasets/clean_CPI.dta", replace 
 
