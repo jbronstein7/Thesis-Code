@@ -49,7 +49,12 @@
 // Keeping only June observations (to match with June ag. survey data)
 	keep if month(date) == 6
 
+// Adding year variable for merging later on
+	gen year = year(date)
+	drop date 
+	order year cpi
+	
 // Now only have obs in June, from 98 to 23
-// Match data (98-23), so no more needs to be done 
+// Years match data (98-23), so no more needs to be done 
 	save "CPI_Clean.dta", replace 
 
