@@ -8,27 +8,27 @@
 	di c(hostname) 
 
 		if "`c(hostname)'" == "AREC-ATHNOS" {
-				cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein\USDA Raw Datasets\"
+				cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein"
 				}
 
 
 		if "`c(hostname)'" == "JBRON-DESKTOP" {
-				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data\USDA Raw Datasets"
+				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data"
 				}
 				
 *************************************
 * Age 
 *************************************
 // Importing first Age dataset
-	import delimited "1997_2012_AvgAge.csv", clear 
-	save "1997_2012_AvgAge.dta", replace
+	import delimited "USDA Raw Datasets/1997_2012_AvgAge.csv", clear 
+	save "USDA Raw Datasets/1997_2012_AvgAge.dta", replace
 
 // Importing second dataset
-	import delimited "2017_AvgAge.csv", clear
-	save "2017_AvgAge.dta", replace
+	import delimited "USDA Raw Datasets/2017_AvgAge.csv", clear
+	save "USDA Raw Datasets/2017_AvgAge.dta", replace
 
 // Appending datasets and dropping unecessary variables 
-	append using "1997_2012_AvgAge.dta"
+	append using "USDA Raw Datasets/1997_2012_AvgAge.dta"
 	keep year state value 
 
 // Formatting state variable to get abbreviation
@@ -43,14 +43,14 @@
 // Changing value to avg age
 	rename value age 
 	sort state year
-	save "clean_age.dta", replace
+	save "Clean(ish) Datasets/clean_age.dta", replace
 	
 *************************************
 * Dairy Operations
 *************************************
 // Importing first Age dataset
-	import delimited "1970_2022_DairyOperations.csv", clear 
-	save "1970_2022_DairyOperations.dta", replace
+	import delimited "USDA Raw Datasets/1970_2022_DairyOperations.csv", clear 
+	save "USDA Raw Datasets/1970_2022_DairyOperations.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -67,21 +67,21 @@
 // Changing value to avg age
 	rename value DairyOperations 
 	sort state year
-	save "clean_dairy.dta", replace
+	save "Clean(ish) Datasets/clean_dairy.dta", replace
 	
 *************************************
 * Ethnicity and Gender 
 *************************************
 // Importing first dataset
-	import delimited "1997_2012_EthnicityGender.csv", clear 
-	save "1997_2012_EthnicityGender.dta", replace
+	import delimited "USDA Raw Datasets/1997_2012_EthnicityGender.csv", clear 
+	save "USDA Raw Datasets/1997_2012_EthnicityGender.dta", replace
 
 // Importing second dataset
-	import delimited "2017_EthnicityGender.csv", clear
-	save "2017_EthnicityGender.dta", replace
+	import delimited "USDA Raw Datasets/2017_EthnicityGender.csv", clear
+	save "USDA Raw Datasets/2017_EthnicityGender.dta", replace
 
 // Appending datasets and dropping unecessary variables 
-	append using "1997_2012_EthnicityGender.dta"
+	append using "USDA Raw Datasets/1997_2012_EthnicityGender.dta"
 	keep if domain == "TOTAL"
 	destring dataitem, replace
 	keep year state dataitem value
@@ -112,14 +112,14 @@
 
 // Saving 
 	sort state year
-	save "clean_EthnicityGender.dta", replace
+	save "Clean(ish) Datasets/clean_EthnicityGender.dta", replace
 	
 *************************************
 * Acres Operated
 *************************************
 // Importing first dataset
-	import delimited "1997_2017_AcresOperated.csv", clear 
-	save "1997_2017_AcresOperated.dta", replace
+	import delimited "USDA Raw Datasets/1997_2017_AcresOperated.csv", clear 
+	save "USDA Raw Datasets/1997_2017_AcresOperated.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -133,14 +133,14 @@
 // Changing value
 	rename value TotalAcres 
 	sort state year
-	save "clean_Acres.dta", replace
+	save "Clean(ish) Datasets/clean_Acres.dta", replace
 	
 *************************************
 * Crop Operations 
 *************************************
 // Importing first dataset
-	import delimited "1997_2017_CropOperations.csv", clear 
-	save "1997_2017_CropOperations.dta", replace
+	import delimited "USDA Raw Datasets/1997_2017_CropOperations.csv", clear 
+	save "USDA Raw Datasets/1997_2017_CropOperations.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -154,14 +154,14 @@
 // Changing value
 	rename value NumCrop
 	sort state year
-	save "clean_Crop.dta", replace
+	save "Clean(ish) Datasets/clean_Crop.dta", replace
 	
 *************************************
 * Income Per Operation
 *************************************
 // Importing first dataset
-	import delimited "1997_2017_FarmIncomePerOper.csv", clear 
-	save "1997_2017_FarmIncomePerOper.dta", replace
+	import delimited "USDA Raw Datasets/1997_2017_FarmIncomePerOper.csv", clear 
+	save "USDA Raw Datasets/1997_2017_FarmIncomePerOper.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -175,14 +175,14 @@
 // Changing value
 	rename value IncomePerOperation
 	sort state year
-	save "clean_income.dta", replace
+	save "Clean(ish) Datasets/clean_income.dta", replace
 	
 *************************************
 * Total Operations
 *************************************
 // Importing first dataset
-	import delimited "1997_2017_AcresOperated.csv", clear 
-	save "1997_2017_AcresOperated.dta", replace
+	import delimited "USDA Raw Datasets/1997_2017_AcresOperated.csv", clear 
+	save "USDA Raw Datasets/1997_2017_AcresOperated.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -196,14 +196,14 @@
 // Changing value
 	rename value TotalOperations 
 	sort state year
-	save "clean_operations.dta", replace
+	save "Clean(ish) Datasets/clean_operations.dta", replace
 
 *************************************
 * Poultry Operations
 *************************************
 // Importing first dataset
-	import delimited "1997_2017_PoultryOperations.csv", clear 
-	save "1997_2017_PoultryOperations.dta", replace
+	import delimited "USDA Raw Datasets/1997_2017_PoultryOperations.csv", clear 
+	save "USDA Raw Datasets/1997_2017_PoultryOperations.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -217,14 +217,14 @@
 // Changing value
 	rename value NumPoultry
 	sort state year
-	save "clean_poultry.dta", replace
+	save "Clean(ish) Datasets/clean_poultry.dta", replace
 	
 *************************************
 * Off Farm Occupation
 *************************************
 // Importing first dataset
-	import delimited "1997_2017_PrimaryOccOffFarm.csv", clear 
-	save "1997_2017_PrimaryOccOffFarm.dta", replace
+	import delimited "USDA Raw Datasets/1997_2017_PrimaryOccOffFarm.csv", clear 
+	save "USDA Raw Datasets/1997_2017_PrimaryOccOffFarm.dta", replace
 
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -238,14 +238,14 @@
 // Changing value
 	rename numprimoff NumOffFarm
 	sort state year
-	save "clean_OffFarm.dta", replace
+	save "Clean(ish) Datasets/clean_OffFarm.dta", replace
 	
 ***********************************************
 * Persons in Household and Years on Operation 
 ***********************************************
 // Importing first dataset
-	import delimited "2002_2017_PersonsHousehold_YearsOnOperation.csv", clear 
-	save "2002_2017_PersonsHousehold_YearsOnOperation.dta", replace
+	import delimited "USDA Raw Datasets/2002_2017_PersonsHousehold_YearsOnOperation.csv", clear 
+	save "USDA Raw Datasets/2002_2017_PersonsHousehold_YearsOnOperation.dta", replace
 
 // Appending datasets and dropping unecessary variables 
 	destring dataitem, replace
@@ -271,7 +271,7 @@
 
 // Saving 
 	sort state year
-	save "clean_HouseSize_Experience.dta", replace
+	save "Clean(ish) Datasets/clean_HouseSize_Experience.dta", replace
 	
 	
 	
