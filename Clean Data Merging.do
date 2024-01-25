@@ -2,7 +2,7 @@
 * Title: Clean Data Arranging 
 * Author: Joe Bronstein
 * Purpose: To merge cleaned datasets into a larger one 
-* Last Modified: 1/23/2024
+* Last Modified: 1/24/2024
 * Assumes: Data Arranging file and USDA and CPI cleaning files have been run
 ********************************************************************************
 	di c(hostname) 
@@ -64,6 +64,7 @@
 	drop _merge	
 	sort state year
 // Now have singular dataset with all USDA NASS data
+	save "USDA_merged.dta", replace
 
 *************************************
 * 2. Next merging CPI data
