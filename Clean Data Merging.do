@@ -54,7 +54,7 @@
 	
 // Merge operations data
 	merge 1:1 state year using "clean_operations.dta"
-	destring IncomePerOperation, replace ignore(",")
+	destring TotalOperations, replace ignore(",")
 	drop _merge	
 	sort state year
 	
