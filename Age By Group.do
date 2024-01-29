@@ -19,9 +19,14 @@
 **********************************************************
 * 0 Importing raw data 
 **********************************************************
-	import delimited "\USDA Raw Datasets\97_12_AgeByGroup.csv", clear
+	import delimited "USDA Raw Datasets\97_12_AgeByGroup.csv", clear
 	save "97_12_AgeByGroup.dta", replace
-
+	
+	import delimited "USDA Raw Datasets\17_AgeByGroup.csv", clear
+	save "17_AgeByGroup.dta", replace
+	
+	append using "97_12_AgeByGroup.dta"
+	
 // Keeping only variables we care about 
 	keep year state dataitem value
 
@@ -32,12 +37,12 @@
 * 1 Re-formatting dataset
 **********************************************************
 // Creating new variables
-	gen count25_34 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 25 TO 34 - NUMBER OF OPERATORS"
-	gen count35_44 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 35 TO 44 - NUMBER OF OPERATORS"
-	gen count45_54 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 45 TO 54 - NUMBER OF OPERATORS"
-	gen count55_64 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 25 TO 34 - NUMBER OF OPERATORS"
-	gen count65_74 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 65 TO 74 - NUMBER OF OPERATORS"
-	gen countGE_75 = value if dataitem == "OPERATORS, PRINCIPAL, AGE GE 75 - NUMBER OF OPERATORS"
+	gen count25_34 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 25 TO 34 - NUMBER OF OPERATORS" | dataitem == "PRODUCERS, PRIMARY, AGE 25 TO 34 - NUMBER OF PRODUCERS"
+	gen count35_44 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 35 TO 44 - NUMBER OF OPERATORS" | dataitem == "PRODUCERS, PRIMARY, AGE 35 TO 44 - NUMBER OF PRODUCERS"
+	gen count45_54 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 45 TO 54 - NUMBER OF OPERATORS" | dataitem == "PRODUCERS, PRIMARY, AGE 45 TO 54 - NUMBER OF PRODUCERS"
+	gen count55_64 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 25 TO 34 - NUMBER OF OPERATORS" | dataitem == "PRODUCERS, PRIMARY, AGE 55 TO 64 - NUMBER OF PRODUCERS"
+	gen count65_74 = value if dataitem == "OPERATORS, PRINCIPAL, AGE 65 TO 74 - NUMBER OF OPERATORS" | dataitem == "PRODUCERS, PRIMARY, AGE 65 TO 74 - NUMBER OF PRODUCERS"
+	gen countGE_75 = value if dataitem == "OPERATORS, PRINCIPAL, AGE GE 75 - NUMBER OF OPERATORS" | dataitem == "PRODUCERS, PRIMARY, AGE GE 75 - NUMBER OF PRODUCERS"
 	
 	drop dataitem value
 	
@@ -69,7 +74,7 @@
 * 3 Normalizing counts to count per operation
 **********************************************************
 // Merging total operations data 
-	merge 1:1 year state using "\Clean(ish) Datasets\clean_operations.dta"
+	merge 1:1 year state using "Clean(ish) Datasets\clean_operations.dta"
 	drop _merge
 	
 // Now dividing count variables by total operations 
