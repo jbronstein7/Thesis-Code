@@ -71,11 +71,10 @@
 	sort state year
 	
 **********************************************************
-* 3 Normalizing counts to count per operation
+* 3 Normalizing counts to count per operation******************************TO BE COMPLETED****************
 **********************************************************
-// Merging total operations data 
-	merge 1:1 year state using "Clean(ish) Datasets\clean_operations.dta"
-	drop _merge
+// Creating total variable
+	egen sum_of_counts = total(count25_34 count35_44 count45_54 count55_64 count65_74 countGE_75)
 	
 // Now dividing count variables by total operations 
 	gen prop25_34 = count25_34 / TotalOperations
@@ -84,3 +83,8 @@
 	gen prop55_64 = count55_64 / TotalOperations
 	gen prop65_74 = count65_74 / TotalOperations
 	gen propGE_75 = countGE_75 / TotalOperations
+
+// Only keeping variables we care about 
+	keep state year prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75
+	sort state year
+	save "Clean(ish) Datasets\Clean_Age_PropByGroup.dta"
