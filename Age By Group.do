@@ -69,6 +69,7 @@
 
 // Saving 
 	sort state year
+	save "Clean(ish) Datasets\Clean_Age_CountByGroup.dta", replace 
 	
 **********************************************************
 * 3 Normalizing counts to count per operation******************************TO BE COMPLETED****************
