@@ -65,12 +65,12 @@
 	sort state year
 // Now have singular dataset with all USDA NASS data
 	save "USDA_merged.dta", replace
-
+	
 *************************************
-* 2. Next merging CPI data
+* 2. Merging grouped age data
 *************************************
-// Merging one to many by year (will have duplicates)
-	merge m:m year using "cpi_merged.dta"
+// merging one to one by state year 
+	merge 1:1 state year using "Clean_Age_PropByGroup.dta"
 	drop _merge	
 	sort state year
 	
@@ -83,9 +83,16 @@
 	sort state year
 
 *************************************
-* 4. Merging grouped age data
+* 4. Next merging CPI data
 *************************************
-// merging one to one by state year 
-	merge 1:1 state year using "Clean_Age_PropByGroup.dta"
+// Merging one to many by year (will have duplicates)
+	merge m:m year using "cpi_merged.dta"
 	drop _merge	
 	sort state year
+	
+// Ordering 
+	order state year OwnOrLeaseComputers
+	
+// Dropping Alaska, Hawaii, and DC, they are not present in dependent variable
+	drop if state == "AK" | state == "HI" | state == "DC"
+	*48 obs deleted
