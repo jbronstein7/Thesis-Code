@@ -68,7 +68,7 @@
 *************************************
 
 // Keeping only June observations (to match with June ag. survey data)
-	keep if month(date) == 6
+	keep if month(date) == 6 | year(date) == 1997   // Only Dec. is available for 1997
 
 // Adding year variable for merging later on
 	gen year = year(date)
@@ -77,5 +77,9 @@
 	
 // Now only have obs in June, from 98 to 23
 // Years match data (98-23), so no more needs to be done 
-	save "Clean(ish) Datasets/clean_CPI.dta", replace 
+	save "Clean(ish) Datasets/clean_comp_CPI.dta", replace 
+	
+*************************************
+* 3. Merging All CPI data together
+*************************************
 
