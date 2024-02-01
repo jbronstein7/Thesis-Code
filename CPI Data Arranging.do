@@ -2,7 +2,7 @@
 * Title: CPI Data Arranging 
 * Author: Joe Bronstein
 * Purpose: To clean and aggregate Computer CPI data to merge into larger dataset
-* Last Modified: 1/23/2024
+* Last Modified: 2/1/2024
 * Assumes: CPI data have been downloaded, and are in a directory 
 ********************************************************************************
 	di c(hostname) 
@@ -17,12 +17,15 @@
 				}
 
 *************************************
-* 0. Importing CPI Dataset
+* 0. Importing CPI Datasets
 *************************************
 
-// Importing CPI Data
+// Importing Computer CPI Data
 	import delimited "Other Raw Data/CPI_Computers_1997_2023.csv", clear 
 	save "Other Raw Data/CPI_Raw.dta", replace 
+	
+// Importing Regional CPI Data
+
 	
 *************************************
 * 1. Re-formatting date 
