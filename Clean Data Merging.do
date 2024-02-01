@@ -90,9 +90,15 @@
 	drop _merge	
 	sort state year
 	
+*************************************
+* 5. General modifications
+*************************************	
 // Ordering 
-	order state year OwnOrLeaseComputers
+	order state region year OwnOrLeaseComputers
+	rename region division // to be consistent with census definition
 	
 // Dropping Alaska, Hawaii, and DC, they are not present in dependent variable
 	drop if state == "AK" | state == "HI" | state == "DC"
 	*48 obs deleted
+
+save "merged_all.dta", replace
