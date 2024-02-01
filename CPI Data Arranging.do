@@ -26,8 +26,8 @@
 	clear
 	
 // Importing Regional CPI Data, using a loop for 4 regions
-// First setting local variables 
-	loc region west Northeast South Midwest
+// First setting global variables 
+	global region West Northeast South Midwest
 	
 // Creating a loop
 	foreach x in `region'{
@@ -38,7 +38,7 @@
 			drop SeriesID
 			keep if Period == "M06"
 			rename Value `x'CPI
-		
+			rename Year year
 		// Save file in stata format
 			save "Clean(ish) Datasets/`x'_CPI_Clean.dta", replace 
 			clear
@@ -59,6 +59,7 @@
 	drop date
 	rename date_str date
 	order date cpi
+	rename cpi CompCPI
 	
 	save "Other Raw Data/CPI_Raw.dta", replace 
 // Now have date formatted properly
@@ -73,13 +74,43 @@
 // Adding year variable for merging later on
 	gen year = year(date)
 	drop date 
-	order year cpi
+	order year CompCPI
 	
 // Now only have obs in June, from 98 to 23
 // Years match data (98-23), so no more needs to be done 
 	save "Clean(ish) Datasets/clean_comp_CPI.dta", replace 
+	clear 
 	
 *************************************
 * 3. Merging All CPI data together
 *************************************
-
+// Starting with computer data
+	use "Clean(ish) Datasets/clean_comp_CPI.dta"
+	
+// Merging 1 to 1 by year for each of the 4 census regions
+	merge 1:1 year using "Clean(ish) Datasets/west_cpi_clean.dta"
+	
+	//Drop variables
+		drop _merge Period
+		
+// Repeating for next 3 variables 
+	merge 1:1 year using "Clean(ish) Datasets/south_cpi_clean.dta" //south 
+	drop _merge Period
+	
+	merge 1:1 year using "Clean(ish) Datasets/northeast_cpi_clean.dta" //northeast 
+	drop _merge Period
+	
+	merge 1:1 year using "Clean(ish) Datasets/midwest_cpi_clean.dta" //midwest
+	drop _merge Period
+	
+	
+	save "Clean(ish) Datasets/cpi_merged.dta", replace
+	
+// To Loop at Later Date************************************************************
+	foreach x in `region'{
+		// Merge 1 to 1 by year
+		merge 1:1 year using "Clean(ish) Datasets/`x'_cpi_clean.dta"
+		
+		// Drop variables 
+		drop _merge Period
+	}

@@ -69,7 +69,23 @@
 *************************************
 * 2. Next merging CPI data
 *************************************
-// Merge CPI data*****************************************
-	merge 1:1 year using "clean_CPI.dta"
+// Merging one to many by year (will have duplicates)
+	merge m:m year using "cpi_merged.dta"
+	drop _merge	
+	sort state year
+	
+*************************************
+* 3. Merging tech data
+*************************************
+// merging one to one by state year 
+	merge 1:1 state year using "all_data.dta"
+	drop _merge	
+	sort state year
+
+*************************************
+* 4. Merging grouped age data
+*************************************
+// merging one to one by state year 
+	merge 1:1 state year using "Clean_Age_PropByGroup.dta"
 	drop _merge	
 	sort state year
