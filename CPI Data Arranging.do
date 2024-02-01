@@ -1,7 +1,7 @@
 ********************************************************************************
 * Title: CPI Data Arranging 
 * Author: Joe Bronstein
-* Purpose: To clean and aggregate Computer CPI data to merge into larger dataset
+* Purpose: To clean and aggregate Computer and Regional CPI data to merge into larger dataset
 * Last Modified: 2/1/2024
 * Assumes: CPI data have been downloaded, and are in a directory 
 ********************************************************************************
@@ -23,13 +23,31 @@
 // Importing Computer CPI Data
 	import delimited "Other Raw Data/CPI_Computers_1997_2023.csv", clear 
 	save "Other Raw Data/CPI_Raw.dta", replace 
+	clear
 	
-// Importing Regional CPI Data
-
+// Importing Regional CPI Data, using a loop for 4 regions
+// First setting local variables 
+	loc region west Northeast South Midwest
+	
+// Creating a loop
+	foreach x in `region'{
+		// Import the excel file 
+			import excel using "Other Raw Data/`x'_CPI_Raw.xlsx", firstrow
+		
+		// Drop series ID variable and keep only June months (match June ag survey)
+			drop SeriesID
+			keep if Period == "M06"
+			rename Value `x'CPI
+		
+		// Save file in stata format
+			save "Clean(ish) Datasets/`x'_CPI_Clean.dta", replace 
+			clear
+	}
 	
 *************************************
-* 1. Re-formatting date 
+* 1. Re-formatting date for computer CPI set
 *************************************
+	use "Other Raw Data/CPI_Raw.dta", clear
 
 // Creating an intermediate variable 
 	gen date_str = date(date, "MDY")
