@@ -17,11 +17,22 @@
 				}
 
 ********************************************************************************
-* 0 Importing dataset and merging (still missing CPI for now)
+* 0 Importing dataset and merging
 ********************************************************************************
-	use "Merged_all.dta", replace
+	use "Merged_all.dta", clear
 	
 	
 ********************************************************************************
-* 1 
+* 1 Filling in missings for tech variables (every other year)
 ********************************************************************************
+// Creating local set called tech to reference variables 
+	local tech OwnOrLeaseComputers ComputersForFarmBusiness InternetAccess ComputerAccess SmartPhoneTabletFarmBusiness SmartPhone
+
+// Filling in missing values for tech variables (some will still be missing)
+	foreach x in `tech'{
+		// average the 2 obs surrounding a missing
+		replace `x' = (`x'[_n-1] + `x'[_n+1]) / 2 if missing(`x') 
+	}
+	
+	
+

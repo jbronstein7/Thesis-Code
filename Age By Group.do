@@ -49,14 +49,6 @@
 // Merging new variables to one observation 
 // Reshaping dataset		
 	collapse (sum) count25_34 count35_44 count45_54 count55_64 count65_74 countGE_75 , by(year state)
-
-// Changing 0's to missings, checked to confirm there are no zeroes in original dataset
-	replace count25_34 = . if count25_34 == 0
-	replace count35_44 = . if count35_44 == 0
-	replace count45_54 = . if count45_54 == 0
-	replace count55_64 = . if count55_64 == 0
-	replace count65_74 = . if count65_74 == 0
-	replace countGE_75 = . if countGE_75 == 0
 	
 // Formatting state variable to get abbreviation
 	statastates, name(state)
@@ -75,17 +67,26 @@
 * 3 Normalizing counts to count per operation******************************TO BE COMPLETED****************
 **********************************************************
 // Creating total variable
-	egen sum_of_counts = total(count25_34 count35_44 count45_54 count55_64 count65_74 countGE_75)
+	gen sum_of_counts = count25_34 + count35_44 + count45_54 + count55_64 + count65_74 + countGE_75 
 	
 // Now dividing count variables by total operations 
-	gen prop25_34 = count25_34 / TotalOperations
-	gen prop35_44 = count35_44 / TotalOperations
-	gen prop45_54 = count45_54 / TotalOperations
-	gen prop55_64 = count55_64 / TotalOperations
-	gen prop65_74 = count65_74 / TotalOperations
-	gen propGE_75 = countGE_75 / TotalOperations
+	gen prop25_34 = (count25_34 / sum_of_counts) * 100
+	gen prop35_44 = (count35_44 / sum_of_counts) * 100
+	gen prop45_54 = (count45_54 / sum_of_counts) * 100
+	gen prop55_64 = (count55_64 / sum_of_counts) * 100
+	gen prop65_74 = (count65_74 / sum_of_counts) * 100
+	gen propGE_75 = (countGE_75 / sum_of_counts) * 100
 
 // Only keeping variables we care about 
 	keep state year prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75
 	sort state year
-	save "Clean(ish) Datasets\Clean_Age_PropByGroup.dta"
+
+// Convert 0's to missing's
+	replace prop25_34 = . if prop25_34 == 0
+	replace prop35_44 = . if prop35_44 == 0
+	replace prop45_54 = . if prop45_54 == 0
+	replace prop55_64 = . if prop55_64 == 0
+	replace prop65_74 = . if prop65_74 == 0
+	replace propGE_75 = . if propGE_75 == 0
+	
+	save "Clean(ish) Datasets\Clean_Age_PropByGroup.dta", replace
