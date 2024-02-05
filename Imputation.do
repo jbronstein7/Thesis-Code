@@ -1,7 +1,7 @@
 ********************************************************************************
 * Title: Data Imputation
 * Author: Joe Bronstein
-* Purpose: To impute missing vlaues and form complete dataset to use for modeling 
+* Purpose: To impute missing values and form complete dataset to use for modeling 
 * Last Modified: 2/1/2024
 * Assumes: All other data arranging files have been run
 ********************************************************************************
@@ -34,5 +34,4 @@
 		replace `x' = (`x'[_n-1] + `x'[_n+1]) / 2 if missing(`x') 
 	}
 	
-	
-
+	save "merged_all_imputed.dta", replace
