@@ -63,9 +63,63 @@
 	destring NumPoultry, replace ignore(",")
 	drop _merge	
 	sort state year
+	
+// Adding labels
+// For ethnicity 
+	local ethnicity Asian AfricanAmerican Hispanic Multi Pacific White
+		foreach x in `ethnicity'{
+		label variable Num`x' "Count of `x' farmers"
+	}
+	
+// For operation type 
+	local other Poultry Crop
+	foreach x in `other'{
+		label variable Num`x' "Count of `x' farms"
+	}
+	label variable DairyOperation "Count of dairy operations" // dairy count 
+	label variable NumOffFarm "Number of primary producers/operatiors who have primary occupation off farm"
+	label variable TotalOperations "Total number of operations"
+	label variable TotalAcres "Total acreage of all operations"
+	label variable IncomePerOperation "Farm related income per operation ($)"
+	
 // Now have singular dataset with all USDA NASS data
 	save "USDA_merged.dta", replace
 	
+***********************************************
+* 1a Converting Counts To Proportions  
+***********************************************
+// Sum up total 
+	egen sum_demographics = rowtotal(NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite)
+	
+// Creating a local set of variables for ethnicity
+	local demographics Asian AfricanAmerican Hispanic Multi Pacific White
+	
+// Creating a loop to generate new proportion variables for each ethnicity category 
+	foreach x in `demographics'{
+		gen prop_`x' = (Num`x' / sum_demographics) * 100
+		label variable prop_`x' "Proportion of `x' farmers"
+	}
+	drop sum_demographics
+	
+// For gender 
+	local gender Male Female
+	foreach x in `gender'{
+		gen prop_`x' = (Num`x' / (NumMale + NumFemale)) * 100
+		label variable prop_`x' "Proportion of `x' farmers"
+		label variable Num`x' "Count of `x' farmers"
+	}
+
+// Commodities 
+	gen prop_crop = (NumCrop / TotalOperations) * 100
+	gen prop_dairy = (DairyOperations / TotalOperations) * 100
+	gen acres_per_oper = (TotalAcres / TotalOperations) * 100
+	// Adding labels 
+	label variable prop_crop "Proportion of Crop Operations"
+	label variable prop_dairy "Proportion of dairy operations"
+	label variable acres_per_oper "Acres Per Operation"
+	
+// Label age 
+	label variable age "average age"
 *************************************
 * 2. Merging grouped age data
 *************************************

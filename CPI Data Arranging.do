@@ -78,6 +78,13 @@
 
 // Adding year variable for merging later on
 	gen year = year(date)
+	
+// Re-basing CPI to 1997 for consistency
+	gen rebase = (CompCPI / CompCPI[1]) * 100
+	
+// Dropping and ordering variables 
+	drop CompCPI
+	rename rebase CompCPI
 	drop date 
 	order year CompCPI
 	

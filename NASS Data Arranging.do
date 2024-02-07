@@ -311,12 +311,18 @@
 	rename state_str state
 	order state year 
 
+// Reshaping dataset
+	destring HouseholdSize, replace ignore (",")
+	destring Experience, replace
+	collapse (sum) HouseholdSize Experience, by(year state)
+	
+// Adding labels 
+	label variable HouseholdSize "Total number of people in farm households by state"
+	label variable Experience "Avg. Years on any operation of principal operator"
 // Saving 
 	sort state year
 	save "Clean(ish) Datasets/clean_HouseSize_Experience.dta", replace
 	
-	
-	
-	
+
 	
 	

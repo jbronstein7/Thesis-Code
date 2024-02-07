@@ -64,7 +64,7 @@
 	save "Clean(ish) Datasets\Clean_Age_CountByGroup.dta", replace 
 	
 **********************************************************
-* 3 Normalizing counts to count per operation******************************TO BE COMPLETED****************
+* 3 Normalizing counts to count per operation
 **********************************************************
 // Creating total variable
 	gen sum_of_counts = count25_34 + count35_44 + count45_54 + count55_64 + count65_74 + countGE_75 
@@ -88,5 +88,13 @@
 	replace prop55_64 = . if prop55_64 == 0
 	replace prop65_74 = . if prop65_74 == 0
 	replace propGE_75 = . if propGE_75 == 0
+
+// Labelling
+	label variable prop25_34 "Proportion of farmers in the 25-34 age range"
+	label variable prop35_44 "Proportion of farmers in the 35-44 age range"
+	label variable prop45_54 "Proportion of farmers in the 45-54 age range"
+	label variable prop55_64 "Proportion of farmers in the 55-64 age range"
+	label variable prop65_74 "Proportion of farmers in the 65-74 age range"
+	label variable propGE_75 "Proportion of farmers older than 75"
 	
 	save "Clean(ish) Datasets\Clean_Age_PropByGroup.dta", replace
