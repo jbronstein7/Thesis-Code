@@ -315,7 +315,7 @@
 	destring HouseholdSize, replace ignore (",")
 	destring Experience, replace
 	collapse (sum) HouseholdSize Experience, by(year state)
-	
+	replace Experience = . if Experience == 0
 // Adding labels 
 	label variable HouseholdSize "Total number of people in farm households by state"
 	label variable Experience "Avg. Years on any operation of principal operator"

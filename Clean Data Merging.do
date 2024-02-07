@@ -63,6 +63,11 @@
 	destring NumPoultry, replace ignore(",")
 	drop _merge	
 	sort state year
+
+// Merge experience and persons in household 
+	merge 1:1 state year using "clean_HouseSize_Experience.dta"
+	drop _merge	
+	sort state year
 	
 // Adding labels
 // For ethnicity 
@@ -135,6 +140,14 @@
 	merge 1:1 state year using "all_data.dta"
 	drop _merge	
 	sort state year
+
+// labels 
+	label variable OwnOrLeaseComputers "Proportion who own or lease computers"
+	label variable ComputersForFarmBusiness "Proportion who use computers for farm business"
+	label variable InternetAccess "Proportion with internet access"
+	label variable ComputerAccess "Proportion with computer access"
+	label variable SmartPhoneTabletFarmBusiness "Proportion who use smart phones or tablets for farm business"
+	label variable SmartPhone "Proporiton who have a smart phone"
 
 *************************************
 * 4. Next merging CPI data

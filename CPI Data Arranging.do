@@ -97,7 +97,7 @@
 * 3. Merging All CPI data together
 *************************************
 // Starting with computer data
-	use "Clean(ish) Datasets/clean_comp_CPI.dta"
+	use "Clean(ish) Datasets/clean_comp_CPI.dta", clear 
 
 // Looping to merge all 5 sets
 	local region West Northeast South Midwest
@@ -107,7 +107,11 @@
 		
 			// Drop variables 
 			drop _merge Period
-		}	
-
+		}
+// Labels 
+	foreach x in `region'{
+		label variable `x'CPI "CPI for the `x' region"
+	}
+	label variable CompCPI "CPI for computers"
 	save "Clean(ish) Datasets/cpi_merged.dta", replace
 
