@@ -35,3 +35,18 @@
 	}
 	
 	save "merged_all_imputed.dta", replace
+
+********************************************************************************
+* 2 Creating adjusted computer cpi
+********************************************************************************
+// adjusted CPI = CompCPI/RegionCPI
+	gen AdjCompCPI = CompCPI
+		replace AdjCompCPI = (CompCPI / WestCPI) * 100 if region == "West"
+		replace AdjCompCPI = (CompCPI / SouthCPI) * 100 if region == "South"
+		replace AdjCompCPI = (CompCPI / NortheastCPI) * 100 if region == "Northeast"
+		replace AdjCompCPI = (CompCPI / MidwestCPI) * 100 if region == "Midwest"
+
+// Adding label
+	label variable AdjCompCPI "Regionally adjusted CPI for computers"
+	
+	save "merged_all_imputed.dta", replace
