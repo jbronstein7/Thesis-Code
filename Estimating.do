@@ -41,9 +41,28 @@
 // Replacing CompCPI with regionally adjusted CPI
 	regress OwnOrLeaseComputers prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI
 	
-********************************************************************************
-* 1. Second model - Adding fixed effects for location
-********************************************************************************
+// Adding internet access
+	regress OwnOrLeaseComputers prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess
 	
 	
+********************************************************************************
+* 2. Second model - Adding fixed effects for location
+********************************************************************************
+// first with state 
+	xi: regress OwnOrLeaseComputers prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state 
+	// R-squared: 0.95, really shot up
+	
+// Replacing state with census division
+	xi: regress OwnOrLeaseComputers prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.division
+	// R-squared drops to 0.91
+	
+// Replacing divisions with regions
+	xi: regress OwnOrLeaseComputers prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.region
+	// R-squared drops to 0.69
+	
+********************************************************************************
+* 3. Third model - Adding fixed effects for time 
+********************************************************************************
+// controlling for states and year 
+	xi: regress OwnOrLeaseComputers prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state i.year
 	
