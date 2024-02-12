@@ -71,5 +71,9 @@
 * 3. Third model - Adding fixed effects for time 
 ********************************************************************************
 // controlling for states and year 
-	xi: regress OwnOrLeaseComputers $bin_age $ethnicity DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state i.year
+	xi: regress OwnOrLeaseComputers $bin_age $ethnicity DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state i.year, vce(cluster state year)
 	
+********************************************************************************
+* 4. Fourth model - Adding interactions 
+********************************************************************************	
+		xi: regress OwnOrLeaseComputers $bin_age $ethnicity DairyOperations IncomePerOperation prop_Female acres_per_oper (i.year*AdjCompCPI) InternetAccess i.state, vce(cluster state year)
