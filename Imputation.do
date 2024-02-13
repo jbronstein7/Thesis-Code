@@ -67,3 +67,4 @@
 		replace `x' = `x'[_n-2] + ((`x'[_n+1] - `x'[_n-2]) / 3) if missing(`x')
 		replace `x' = (`x'[_n-1] + `x'[_n+1]) / 2 if missing(`x')
 	}
+	save "merged_all_imputed.dta", replace

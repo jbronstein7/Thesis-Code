@@ -16,7 +16,7 @@
 				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data"
 				}
 			
-		log using "estimation log.smcl"
+		log using "estimation log.smcl", replace
 ********************************************************************************
 * 0. Loading in cleaned, imputed dataset, and creating global lists 
 ********************************************************************************
@@ -76,4 +76,22 @@
 ********************************************************************************
 * 4. Fourth model - Adding interactions 
 ********************************************************************************	
-		xi: regress OwnOrLeaseComputers $bin_age $ethnicity DairyOperations IncomePerOperation prop_Female acres_per_oper (i.year*AdjCompCPI) InternetAccess i.state, vce(cluster state year)
+//Creating interaction terms 
+		xi: regress OwnOrLeaseComputers c.($bin_age)##year $ethnicity DairyOperations IncomePerOperation c.prop_Female##year acres_per_oper c.AdjCompCPI##year InternetAccess i.state, vce(cluster state year)
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
