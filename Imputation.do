@@ -50,3 +50,20 @@
 	label variable AdjCompCPI "Regionally adjusted CPI for computers"
 	
 	save "merged_all_imputed.dta", replace
+	
+********************************************************************************
+* 3 Imputing USDA data points 
+********************************************************************************
+// Sort the data
+	sort state year
+	
+// Identifying variables to impute 
+	local missings TotalAcres age NumCrop NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White prop_Male prop_Female prop_crop prop_dairy acres_per_oper prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75
+
+// Creating a loop to impute missings
+	foreach x in `missings'{
+		replace `x' = `x'[_n-1] + ((`x'[_n+4] - `x'[_n-1]) / 5) if missing(`x') 
+		replace `x' = `x'[_n-3] + ((`x'[_n+1] - `x'[_n-3]) / 4) if missing(`x')
+		replace `x' = `x'[_n-2] + ((`x'[_n+1] - `x'[_n-2]) / 3) if missing(`x')
+		replace `x' = (`x'[_n-1] + `x'[_n+1]) / 2 if missing(`x')
+	}
