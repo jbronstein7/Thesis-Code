@@ -80,22 +80,28 @@
 	import delimited "USDA Raw Datasets/2017_EthnicityGender.csv", clear
 	save "USDA Raw Datasets/2017_EthnicityGender.dta", replace
 
+// Importing third dataset
+	import delimited "USDA Raw Datasets/22_EthnicityGender.csv", clear
+	save "USDA Raw Datasets/22_EthnicityGender.dta", replace
+	
 // Appending datasets and dropping unecessary variables 
 	append using "USDA Raw Datasets/1997_2012_EthnicityGender.dta"
+	append using "USDA Raw Datasets/2017_EthnicityGender.dta"
 	keep if domain == "TOTAL"
 	destring dataitem, replace
 	keep year state dataitem value
 	destring value, replace ignore (",")
+	drop if dataitem == "PRODUCERS, AMERICAN INDIAN OR ALASKA NATIVE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
 
 // New Variables
-	gen NumAsian = value if dataitem == "PRODUCERS, PRINCIPAL, ASIAN - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, ASIAN - NUMBER OF OPERATIONS"
-	gen NumAfricanAmerican = value if dataitem == "PRODUCERS, PRINCIPAL, BLACK OR AFRICAN AMERICAN - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, BLACK OR AFRICAN AMERICAN - NUMBER OF OPERATIONS"
-	gen NumHispanic = value if dataitem == "PRODUCERS, PRINCIPAL, HISPANIC - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, HISPANIC - NUMBER OF OPERATIONS"
-	gen NumMulti = value if dataitem == "PRODUCERS, PRINCIPAL, MULTI-RACE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, MULTI-RACE - NUMBER OF OPERATIONS"
-	gen NumPacific = value if dataitem == "PRODUCERS, PRINCIPAL, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER - NUMBER OF OPERATIONS"
-	gen NumWhite = value if dataitem == "PRODUCERS, PRINCIPAL, WHITE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, WHITE - NUMBER OF OPERATIONS"
+	gen NumAsian = value if dataitem == "PRODUCERS, PRINCIPAL, ASIAN - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, ASIAN - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, ASIAN, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS" 
+	gen NumAfricanAmerican = value if dataitem == "PRODUCERS, PRINCIPAL, BLACK OR AFRICAN AMERICAN - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, BLACK OR AFRICAN AMERICAN - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, BLACK OR AFRICAN AMERICAN, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
+	gen NumHispanic = value if dataitem == "PRODUCERS, PRINCIPAL, HISPANIC - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, HISPANIC - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, HISPANIC, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
+	gen NumMulti = value if dataitem == "PRODUCERS, PRINCIPAL, MULTI-RACE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, MULTI-RACE - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, MULTI-RACE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
+	gen NumPacific = value if dataitem == "PRODUCERS, PRINCIPAL, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
+	gen NumWhite = value if dataitem == "PRODUCERS, PRINCIPAL, WHITE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, WHITE - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, WHITE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
 	gen NumMale = value if dataitem == "PRODUCERS, PRINCIPAL, MALE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, MALE - NUMBER OF OPERATIONS"
-	gen NumFemale = value if dataitem == "PRODUCERS, PRINCIPAL, FEMALE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, FEMALE - NUMBER OF OPERATIONS"
+	gen NumFemale = value if dataitem == "PRODUCERS, PRINCIPAL, FEMALE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, FEMALE - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, FEMALE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
 	
 	drop dataitem value 
 	
@@ -133,6 +139,11 @@
 	import delimited "USDA Raw Datasets/1997_2017_AcresOperated.csv", clear 
 	save "USDA Raw Datasets/1997_2017_AcresOperated.dta", replace
 
+// Imprting second dataset
+	import delimited "USDA Raw Datasets/2022_AcresOperated.csv", clear 
+	save "USDA Raw Datasets/2022_AcresOperated.dta", replace
+
+	append using "USDA Raw Datasets/1997_2017_AcresOperated.dta"
 // Formatting state variable to get abbreviation
 	statastates, name(state)
 	
@@ -159,6 +170,7 @@
 	
 // Changing value
 	rename totals TotalAcres 
+	drop if state == "DC"
 
 	save "Clean(ish) Datasets/clean_Acres.dta", replace
 	
@@ -191,6 +203,12 @@
 	import delimited "USDA Raw Datasets/1997_2017_FarmIncomePerOper.csv", clear 
 	save "USDA Raw Datasets/1997_2017_FarmIncomePerOper.dta", replace
 
+// Import using second dataset 
+	import delimited "USDA Raw Datasets/2022_FarmIncomePerOper.csv", clear 
+	save "USDA Raw Datasets/2022_FarmIncomePerOper.dta", replace
+	
+	append using "USDA Raw Datasets/1997_2017_FarmIncomePerOper.dta", force 
+	
 // Formatting state variable to get abbreviation
 	statastates, name(state)
 	
@@ -199,10 +217,12 @@
 	keep year value state_str
 	rename state_str state
 	order state year value 
-
+	destring value, replace ignore(",")
+	
 // Changing value
 	rename value IncomePerOperation
 	sort state year
+	drop if state == "DC"
 	save "Clean(ish) Datasets/clean_income.dta", replace
 	
 *************************************
@@ -212,6 +232,12 @@
 	import delimited "USDA Raw Datasets/1997_2017_NumOperations.csv", clear 
 	save "USDA Raw Datasets/1997_2017_NumOperations.dta", replace
 
+// Importing second dataset
+	import delimited "USDA Raw Datasets/22_NumOperations.csv", clear 
+	save "USDA Raw Datasets/2022_NumOperations.dta", replace
+	
+	append using "USDA Raw Datasets/1997_2017_NumOperations.dta", force
+	
 // Formatting state variable to get abbreviation
 	statastates, name(state)
 	
@@ -238,6 +264,7 @@
 // Changing value
 	rename totals TotalOperations
 	sort state year 
+	drop if state == "DC"
 	save "Clean(ish) Datasets/clean_operations.dta", replace
 
 *************************************
