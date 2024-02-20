@@ -102,7 +102,7 @@
 // Creating a loop to generate new proportion variables for each ethnicity category 
 	foreach x in `demographics'{
 		gen prop_`x' = (Num`x' / sum_demographics) * 100
-		label variable prop_`x' "Proportion of `x' farmers"
+		label variable prop_`x' "Proportion of `x' farms"
 	}
 	drop sum_demographics
 	
@@ -110,8 +110,8 @@
 	local gender Male Female
 	foreach x in `gender'{
 		gen prop_`x' = (Num`x' / (NumMale + NumFemale)) * 100
-		label variable prop_`x' "Proportion of `x' farmers"
-		label variable Num`x' "Count of `x' farmers"
+		label variable prop_`x' "Proportion of `x' farms"
+		label variable Num`x' "Count of `x' farms"
 	}
 
 // Commodities 
@@ -123,6 +123,10 @@
 	label variable prop_dairy "Proportion of dairy operations"
 	label variable acres_per_oper "Acres Per Operation"
 	
+// Household size 
+	gen avg_hhsize = (HouseholdSize / TotalOperations)
+	label variable avg_hhsize "Average Household Size"
+
 // Label age 
 	label variable age "average age"
 *************************************
@@ -168,4 +172,5 @@
 	drop if state == "AK" | state == "HI" | state == "DC"
 	*48 obs deleted
 
+	
 save "merged_all.dta", replace

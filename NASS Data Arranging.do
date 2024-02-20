@@ -26,9 +26,14 @@
 // Importing second dataset
 	import delimited "USDA Raw Datasets/2017_AvgAge.csv", clear
 	save "USDA Raw Datasets/2017_AvgAge.dta", replace
+	
+// Importing third dataset
+	import delimited "USDA Raw Datasets/2022_AvgAge.csv", clear
+	save "USDA Raw Datasets/2022_AvgAge.dta", replace
 
 // Appending datasets and dropping unecessary variables 
-	append using "USDA Raw Datasets/1997_2012_AvgAge.dta"
+	append using "USDA Raw Datasets/1997_2012_AvgAge.dta", force
+	append using "USDA Raw Datasets/2017_AvgAge.dta", force
 	keep year state value 
 
 // Formatting state variable to get abbreviation
@@ -84,9 +89,14 @@
 	import delimited "USDA Raw Datasets/22_EthnicityGender.csv", clear
 	save "USDA Raw Datasets/22_EthnicityGender.dta", replace
 	
+// Importing 22 male data 
+	import delimited "USDA Raw Datasets/22_male.csv", clear
+	save "USDA Raw Datasets/22_male.dta", replace
+	
 // Appending datasets and dropping unecessary variables 
-	append using "USDA Raw Datasets/1997_2012_EthnicityGender.dta"
-	append using "USDA Raw Datasets/2017_EthnicityGender.dta"
+	append using "USDA Raw Datasets/1997_2012_EthnicityGender.dta", force
+	append using "USDA Raw Datasets/2017_EthnicityGender.dta", force
+	append using "USDA Raw Datasets/22_EthnicityGender.dta", force
 	keep if domain == "TOTAL"
 	destring dataitem, replace
 	keep year state dataitem value
@@ -100,7 +110,7 @@
 	gen NumMulti = value if dataitem == "PRODUCERS, PRINCIPAL, MULTI-RACE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, MULTI-RACE - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, MULTI-RACE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
 	gen NumPacific = value if dataitem == "PRODUCERS, PRINCIPAL, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
 	gen NumWhite = value if dataitem == "PRODUCERS, PRINCIPAL, WHITE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, WHITE - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, WHITE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
-	gen NumMale = value if dataitem == "PRODUCERS, PRINCIPAL, MALE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, MALE - NUMBER OF OPERATIONS"
+	gen NumMale = value if dataitem == "PRODUCERS, PRINCIPAL, MALE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, MALE - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, MALE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
 	gen NumFemale = value if dataitem == "PRODUCERS, PRINCIPAL, FEMALE - NUMBER OF OPERATIONS" | dataitem == "OPERATORS, PRINCIPAL, FEMALE - NUMBER OF OPERATIONS" | dataitem == "PRODUCERS, FEMALE, DAY TO DAY DECISIONMAKING - NUMBER OF PRODUCERS"
 	
 	drop dataitem value 
@@ -181,6 +191,12 @@
 	import delimited "USDA Raw Datasets/1997_2017_CropOperations.csv", clear 
 	save "USDA Raw Datasets/1997_2017_CropOperations.dta", replace
 
+// Importing first dataset
+	import delimited "USDA Raw Datasets/2022_CropOperations.csv", clear 
+	save "USDA Raw Datasets/2022_CropOperations.dta", replace
+	
+	append using "USDA Raw Datasets/1997_2017_CropOperations.dta", force
+	
 // Formatting state variable to get abbreviation
 	statastates, name(state)
 	
@@ -295,6 +311,14 @@
 	import delimited "USDA Raw Datasets/1997_2017_PrimaryOccOffFarm.csv", clear 
 	save "USDA Raw Datasets/1997_2017_PrimaryOccOffFarm.dta", replace
 
+// Importing second dataset
+	import delimited "USDA Raw Datasets/2022_PrimaryOccOffFarm.csv", clear 
+	save "USDA Raw Datasets/2022_PrimaryOccOffFarm.dta", replace
+	keep state year value 
+	rename value numprimoff
+	
+	append using "USDA Raw Datasets/1997_2017_PrimaryOccOffFarm.dta"
+	
 // Formatting state variable to get abbreviation
 	statastates, name(state)
 	
@@ -316,19 +340,22 @@
 	import delimited "USDA Raw Datasets/2002_2017_PersonsHousehold_YearsOnOperation.csv", clear 
 	save "USDA Raw Datasets/2002_2017_PersonsHousehold_YearsOnOperation.dta", replace
 
+// Importing first dataset
+	import delimited "USDA Raw Datasets/2022_PersonsHousehold.csv", clear 
+	save "USDA Raw Datasets/2022_PersonsHousehold.dta", replace
+	
+	
 // Appending datasets and dropping unecessary variables 
+	append using "USDA Raw Datasets/2002_2017_PersonsHousehold_YearsOnOperation.dta"
 	destring dataitem, replace
 	keep year state dataitem value
 
 // New Variables
-	gen HouseholdSize = value if dataitem == "PRODUCERS, PRINCIPAL - PERSONS IN HOUSEHOLD, MEASURED IN PERSONS" | dataitem == "OPERATORS, PRINCIPAL - PERSONS IN HOUSEHOLD, MEASURED IN PERSONS"
+	gen	HouseholdSize = value if dataitem == "PRODUCERS, PRINCIPAL - PERSONS IN HOUSEHOLD, MEASURED IN PERSONS" | dataitem == "OPERATORS, PRINCIPAL - PERSONS IN HOUSEHOLD, MEASURED IN PERSONS" | dataitem == "PRODUCERS, DAY TO DAY DECISIONMAKING - PERSONS IN HOUSEHOLD, MEASURED IN PERSONS"
 	gen Experience = value if dataitem == "OPERATORS, PRINCIPAL - YEARS ON ANY OPERATION, AVG, MEASURED IN YEARS" | dataitem == "PRODUCERS, PRINCIPAL - YEARS ON ANY OPERATION, AVG, MEASURED IN YEARS"
 	
 	drop dataitem value 
 	
-// Reshaping dataset		
-
-
 // Formatting state variable to get abbreviation
 	statastates, name(state)
 	
