@@ -24,7 +24,7 @@
 	use "clean(ish) datasets\merged_all_imputed.dta", clear 
 	
 // Creating global lists for key variables 
-	local bin_age "prop25_34 prop35_44 prop45_54 prop65_74 propGE_75"
+	local bin_age "prop25_34 prop35_44 prop45_54 prop65_74 prop55_64"
 	// Using the 55 to 64 age group as baseline, since that encompasses the avg. age 
 	
 	local ethnicity "prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific"
@@ -95,8 +95,12 @@
 // Adding age squared 
 	xi: regress OwnOrLeaseComputers c.age##c.age c.age##year `ethnicity' DairyOperations IncomePerOperation c.prop_Female##year acres_per_oper c.AdjCompCPI##year InternetAccess i.state, vce(cluster state year)
 			
-		
-		
+********************************************************************************
+* 4. Fifth model - Only including variables that go back to 1997
+********************************************************************************		
+		local bin_age "prop25_34 prop35_44 prop45_54 prop65_74 prop55_64"
+	xi: regress OwnOrLeaseComputers NumHispanic NumOffFarm DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state, vce(cluster state)
+			
 		
 		
 		
