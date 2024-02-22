@@ -16,7 +16,7 @@
 				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data"
 				}
 			
-		
+	ssc install estout	
 ********************************************************************************
 * 0. Loading in cleaned, imputed dataset, and creating global lists 
 ********************************************************************************
@@ -36,8 +36,10 @@
 ********************************************************************************
 	log using "no fixed effects log.smcl", replace
 // Using average age
-	regress OwnOrLeaseComputers age DairyOperations IncomePerOperation prop_Female acres_per_oper Experience, robust 
-
+	qui regress OwnOrLeaseComputers age DairyOperations IncomePerOperation prop_Female acres_per_oper Experience, robust 
+	estimates store model_1
+	esttab model_1, keep(age DairyOperations) stats (r2 N)
+	
 // Dropping experience to increase sample size 
 	regress OwnOrLeaseComputers age DairyOperations IncomePerOperation prop_Female acres_per_oper, robust // sample size more than doubles, much higher R-sq as well
 	
