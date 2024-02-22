@@ -127,6 +127,11 @@
 	gen avg_hhsize = (HouseholdSize / TotalOperations)
 	label variable avg_hhsize "Average Household Size"
 
+// Setting prop_hispanic = . for 1997 to 2002 due extraneous values, will impute later 
+	replace prop_Hispanic = . if year == 1997 | year == 1998 | year == 1999 | year == 2000 | year == 2001
+	
+	
+	
 // Label age 
 	label variable age "average age"
 *************************************

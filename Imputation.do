@@ -157,6 +157,7 @@ save "merged_all_imputed.dta", replace
 	gen prop_crop_1 = (NumCrop / TotalOperations) * 100
 	gen prop_dairy_1 = (DairyOperations / TotalOperations) * 100
 	gen acres_per_oper_1 = (TotalAcres / TotalOperations) * 100
+	gen prop_poultry = (NumPoultry / TotalOperations) * 100
 	// Adding labels 
 	label variable prop_crop "Proportion of Crop Operations"
 	label variable prop_dairy "Proportion of dairy operations"
