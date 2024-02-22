@@ -108,7 +108,7 @@ save "merged_all_imputed.dta", replace
 	save "merged_all_imputed.dta", replace
 
 // Creating locals 
-	local missings "TotalAcres age NumCrop DairyOperations NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience"
+	local missings "TotalAcres age NumCrop DairyOperations NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience prop65_74 propGE_75" 
 	local states "AL AR AZ CA CO CT DE FL GA IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA SC SD TN TX UT VA VT WA WI WV WY"
 
 	foreach x of local states {
@@ -118,6 +118,7 @@ save "merged_all_imputed.dta", replace
 				predict pred_`a', xb // Using regr. coeff. to predict values 
 				replace `a' = pred_`a' if missing(`a') // Using predicted values to fill missings 
 				drop pred_`a' // Dropping prediction variable 
+				replace `a' = 0 if `a' < 0 // changing negative counts to 0
 			}
     
 		merge 1:1 state year using "merged_all_imputed.dta" // merging back to the main dataset 
@@ -126,5 +127,51 @@ save "merged_all_imputed.dta", replace
 		sort state year 
 	}
 
-// Now need to re run proportions code to fill in missing proportions 
+// Now need to re run proportions code to fill in missing proportions (copying from clean data merging file)
+// Sum up total 
+	egen sum_demographics = rowtotal(NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite)
+	
+// Creating a local set of variables for ethnicity
+	local demographics Asian AfricanAmerican Hispanic Multi Pacific White
+	
+// Creating a loop to generate new proportion variables for each ethnicity category 
+	foreach x in `demographics'{
+		gen prop_`x'_1 = (Num`x' / sum_demographics) * 100
+		label variable prop_`x' "Proportion of `x' farms"
+		replace prop_`x' = prop_`x'_1  // Using predicted values to fill missings 
+		drop prop_`x'_1
+	}
+	drop sum_demographics
+	
+// For gender 
+	local gender Male Female
+	foreach x in `gender'{
+		gen prop_`x'_1 = (Num`x' / (NumMale + NumFemale)) * 100
+		label variable prop_`x' "Proportion of `x' farms"
+		label variable Num`x' "Count of `x' farms"
+		replace prop_`x' = prop_`x'_1
+		drop prop_`x'_1
+	}
+
+// Commodities 
+	gen prop_crop_1 = (NumCrop / TotalOperations) * 100
+	gen prop_dairy_1 = (DairyOperations / TotalOperations) * 100
+	gen acres_per_oper_1 = (TotalAcres / TotalOperations) * 100
+	// Adding labels 
+	label variable prop_crop "Proportion of Crop Operations"
+	label variable prop_dairy "Proportion of dairy operations"
+	label variable acres_per_oper "Acres Per Operation"
+	
+	replace prop_crop = prop_crop_1
+	replace prop_dairy = prop_dairy_1
+	replace acres_per_oper = acres_per_oper_1
+	 drop prop_crop_1 prop_dairy_1 acres_per_oper_1
+	
+// Household size 
+	gen avg_hhsize_1 = (HouseholdSize / TotalOperations)
+	replace avg_hhsize = avg_hhsize_1
+	label variable avg_hhsize "Average Household Size"
+	
+	save "merged_all_imputed.dta", replace 
+
 	
