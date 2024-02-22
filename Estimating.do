@@ -95,10 +95,12 @@
 		
 // Adding age squared 
 	xi: regress OwnOrLeaseComputers c.age##c.age c.age##year `ethnicity' DairyOperations IncomePerOperation c.prop_Female##year acres_per_oper c.AdjCompCPI##year InternetAccess i.state, vce(cluster state year)
-			
+	
+	log close 
 ********************************************************************************
 * 4. Fifth model - Comparing models going back to 1997
 ********************************************************************************		
+	log using "comparisons log.smcl"
 	xi: regress OwnOrLeaseComputers age NumOffFarm DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state, vce(cluster state)
 			
 		
