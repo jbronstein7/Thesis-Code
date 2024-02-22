@@ -2,7 +2,7 @@
 * Title: Data Imputation
 * Author: Joe Bronstein
 * Purpose: To impute missing values and form complete dataset to use for modeling 
-* Last Modified: 2/1/2024
+* Last Modified: 2/22/2024
 * Assumes: All other data arranging files have been run
 ********************************************************************************
 	di c(hostname) 
@@ -97,6 +97,34 @@ save "merged_all_imputed.dta", replace
 // Adding label
 	label variable AdjCompCPI "Regionally adjusted CPI for computers"
 	
-	drop if year == 2023
 	save "merged_all_imputed.dta", replace
+	
+********************************************************************************
+* 5 Imputing missing values between 1997 and 2002
+********************************************************************************
+// Adding a 0 to be able to run regressions 
+	replace NumPacific = 0 if state == "NH" & year == 1997 
+	replace NumPacific = 0 if state == "DE" & year == 1997 
+	save "merged_all_imputed.dta", replace
+
+// Creating locals 
+	local missings "TotalAcres age NumCrop DairyOperations NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience"
+	local states "AL AR AZ CA CO CT DE FL GA IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA SC SD TN TX UT VA VT WA WI WV WY"
+
+	foreach x of local states {
+		keep if state == "`x'"  // on a state by state basis:
+			foreach a of local missings {
+				regress `a' year // finding slope of var across time 
+				predict pred_`a', xb // Using regr. coeff. to predict values 
+				replace `a' = pred_`a' if missing(`a') // Using predicted values to fill missings 
+				drop pred_`a' // Dropping prediction variable 
+			}
+    
+		merge 1:1 state year using "merged_all_imputed.dta" // merging back to the main dataset 
+		drop _merge 
+		save "merged_all_imputed.dta", replace  // saving 
+		sort state year 
+	}
+
+// Now need to re run proportions code to fill in missing proportions 
 	
