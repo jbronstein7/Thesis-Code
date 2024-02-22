@@ -24,7 +24,7 @@ di c(hostname)
 ********************************************************************************
 * 1. Looking at average by year to determine base year 
 ********************************************************************************
-// Calculate the average by year using egen
+// Calculate the average by year
 	egen avg_value = mean(OwnOrLeaseComputers), by(year)
 	keep year avg_value
 // Sort the data by year
