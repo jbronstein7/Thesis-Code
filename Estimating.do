@@ -16,7 +16,7 @@
 				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data"
 				}
 			
-		log using "no fixed effects log.smcl", replace
+		
 ********************************************************************************
 * 0. Loading in cleaned, imputed dataset, and creating global lists 
 ********************************************************************************
@@ -30,10 +30,11 @@
 	local ethnicity "prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific"
 	// Using prop_white as baseline 
 	
-
+	
 ********************************************************************************
 * 1. First model - Basic linear model, no fixed effects (location/year dummies)
 ********************************************************************************
+	log using "no fixed effects log.smcl", replace
 // Using average age
 	regress OwnOrLeaseComputers age DairyOperations IncomePerOperation prop_Female acres_per_oper Experience, robust 
 
@@ -96,10 +97,9 @@
 	xi: regress OwnOrLeaseComputers c.age##c.age c.age##year `ethnicity' DairyOperations IncomePerOperation c.prop_Female##year acres_per_oper c.AdjCompCPI##year InternetAccess i.state, vce(cluster state year)
 			
 ********************************************************************************
-* 4. Fifth model - Only including variables that go back to 1997
+* 4. Fifth model - Comparing models going back to 1997
 ********************************************************************************		
-		local bin_age "prop25_34 prop35_44 prop45_54 prop65_74 prop55_64"
-	xi: regress OwnOrLeaseComputers NumHispanic NumOffFarm DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers age NumOffFarm DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state, vce(cluster state)
 			
 		
 		
