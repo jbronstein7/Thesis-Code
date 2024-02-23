@@ -175,4 +175,8 @@ save "merged_all_imputed.dta", replace
 	
 	save "merged_all_imputed.dta", replace 
 
+// Off-farm employment
+	gen prop_OffFarm = (NumOffFarm / TotalOperations) * 100
+	label variable prop_OffFarm "Proportion of Farmers who have off-farm as primary employment"
 	
+	save "merged_all_imputed.dta", replace 	
