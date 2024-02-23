@@ -172,7 +172,7 @@ save "merged_all_imputed.dta", replace
 	gen avg_hhsize_1 = (HouseholdSize / TotalOperations)
 	replace avg_hhsize = avg_hhsize_1
 	label variable avg_hhsize "Average Household Size"
-	
+	drop avg_hhsize_1
 	save "merged_all_imputed.dta", replace 
 
 // Off-farm employment
