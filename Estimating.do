@@ -30,7 +30,7 @@
 	local ethnicity "prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific"
 	// Using prop_white as baseline 
 	
-	
+	local controls ""
 ********************************************************************************
 * 1. First model - Basic linear model, no fixed effects (location/year dummies)
 ********************************************************************************
@@ -42,6 +42,8 @@
 	
 // Dropping experience to increase sample size 
 	regress OwnOrLeaseComputers age DairyOperations IncomePerOperation prop_Female acres_per_oper, robust // sample size more than doubles, much higher R-sq as well
+	estimates store model_1
+	esttab model_1, keep(age DairyOperations) stats (r2 N)
 	
 // Using binned age
 	regress OwnOrLeaseComputers `bin_age' DairyOperations IncomePerOperation prop_Female acres_per_oper, robust
@@ -105,7 +107,9 @@
 	log using "comparisons log.smcl"
 	xi: regress OwnOrLeaseComputers age NumOffFarm DairyOperations IncomePerOperation prop_Female acres_per_oper AdjCompCPI InternetAccess i.state, vce(cluster state)
 			
-		
+	qui regress OwnOrLeaseComputers `bin_age' `ethnicity' DairyOperations IncomePerOperation prop_Female acres_per_oper Experience, robust 
+	estimates store model_1
+	esttab model_1, keep(age DairyOperations) stats (r2 N)	
 		
 		
 		
