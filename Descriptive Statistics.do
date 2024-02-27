@@ -39,3 +39,4 @@ di c(hostname)
 
 // Saving graph 
 	graph save "Charts\Avg_prop_by_year.png", replace
+// 2001 is where the 50% mark is, so likely use 2001 as base year 
