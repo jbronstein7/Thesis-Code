@@ -111,6 +111,7 @@ save "merged_all_imputed.dta", replace
 	local missings "TotalAcres age NumCrop DairyOperations NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience prop65_74 propGE_75" 
 	local states "AL AR AZ CA CO CT DE FL GA IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA SC SD TN TX UT VA VT WA WI WV WY"
 
+// Imputing by mssings by state
 	foreach x of local states {
 		keep if state == "`x'"  // on a state by state basis:
 			foreach a of local missings {
@@ -120,7 +121,7 @@ save "merged_all_imputed.dta", replace
 				drop pred_`a' // Dropping prediction variable 
 				replace `a' = 0 if `a' < 0 // changing negative counts to 0
 			}
-    
+    // Repeating for each variable for each state ^
 		merge 1:1 state year using "merged_all_imputed.dta" // merging back to the main dataset 
 		drop _merge 
 		save "merged_all_imputed.dta", replace  // saving 
