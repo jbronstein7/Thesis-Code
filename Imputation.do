@@ -153,7 +153,7 @@ save "merged_all_imputed.dta", replace
 		drop prop_`x'_1
 	}
 
-// Commodities 
+// Commodities proportions
 	gen prop_crop_1 = (NumCrop / TotalOperations) * 100
 	gen prop_dairy_1 = (DairyOperations / TotalOperations) * 100
 	gen acres_per_oper_1 = (TotalAcres / TotalOperations) * 100
@@ -168,14 +168,14 @@ save "merged_all_imputed.dta", replace
 	replace acres_per_oper = acres_per_oper_1
 	 drop prop_crop_1 prop_dairy_1 acres_per_oper_1
 	
-// Household size 
+// Household size proportion
 	gen avg_hhsize_1 = (HouseholdSize / TotalOperations)
 	replace avg_hhsize = avg_hhsize_1
 	label variable avg_hhsize "Average Household Size"
 	drop avg_hhsize_1
 	save "merged_all_imputed.dta", replace 
 
-// Off-farm employment
+// Off-farm employment proportion
 	gen prop_OffFarm = (NumOffFarm / TotalOperations) * 100
 	label variable prop_OffFarm "Proportion of Farmers who have off-farm as primary employment"
 	
