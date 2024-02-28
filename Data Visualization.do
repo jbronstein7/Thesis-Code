@@ -23,7 +23,7 @@ di c(hostname)
             }
 			
 // Selecting aggregated dataset
-	use "Clean(ish) Datasets\all_data.dta", clear
+	use "Clean(ish) Datasets\merged_all_imputed.dta", clear
 	
 // Creating new variables for better aggregation
 	gen state_1 = state
@@ -64,7 +64,7 @@ di c(hostname)
 	sort state_1 year
 
 // Charting the graph	
-	twoway (line avg_OwnOrLeaseComputers year) (line avg_InternetAccess year), by(state_1) ytitle("Share of Farms") xtitle("Year") xlabel(1997(4)2023) legend(order(1 "Own Or Lease Computers" 2 "Internet Access") position(6) ring(3) rows(1) cols(2))
+	twoway (line reg_avg_OwnOrLeaseComputers year) (line reg_avg_InternetAccess year), by(state_1) ytitle("Share of Farms") xtitle("Year") xlabel(1997(4)2023) legend(order(1 "Own Or Lease Computers" 2 "Internet Access") position(6) ring(3) rows(1) cols(2))
 
 // Graphing OwnOrLeaseComputers and InternetAccess by region, with years on the x-axis
 
