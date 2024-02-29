@@ -199,3 +199,7 @@ log using "all model log.smcl", replace
 	esttab twfe_AvgAge twfe_AvgAgeSq twfe_BinAge es_AvgAge es_AvgAgeSq es_BinAge, drop(_Istate_* prop_crop avg_hhsize prop_poultry prop_OffFarm `ethnicity' ) stats (r2 N)
 	
 	log close 	
+	
+	encode state, generate(state_1)
+	tsset state_1 year
+	gen lag_InternetAccess = L.InternetAccess
