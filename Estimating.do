@@ -2,7 +2,7 @@
 * Title: Estimating
 * Author: Joe Bronstein
 * Purpose: To estimate models  
-* Last Modified: 2/7/2024
+* Last Modified: 3/12/2024
 * Assumes: All other data arranging files have been run, and imputed dataset is available 
 ********************************************************************************
 	di c(hostname) 
