@@ -15,10 +15,10 @@ FOLDER: Imputing - Filling in missing values to get a complete dataset
 
 FOLDER: Raw Data Overview - getting a sense of the raw data
 
-9. Descriptive Statistics - determining base year
-10. Data Visualization - generating charts
+7. Descriptive Statistics - determining base year
+8. Data Visualization - generating charts
 
 FOLDER: Estimations
 
-11. Estimating Draft - intitial regressions, seeing how different model variations come out
-12. Final Estimations - models for final paper and presentation
+9. Estimating Draft - intitial regressions, seeing how different model variations come out
+10. Final Estimations - models for final paper and presentation
