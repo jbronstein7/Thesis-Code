@@ -38,13 +38,27 @@
 	// variables mentioned as singificant in the literaure 
 
 ********************************************************************************
-* 1. Naive Model - Basic Linear Regression with Fixed effects for time and state
+* 1. TWFE - Comparing 4 models
 ********************************************************************************
+// Starting with a basic OLS model, no fixed effects
+	xi: qui regress OwnOrLeaseComputers `var_interest' `controls', vce(cluster state)
+	estimates store OLS
+	
+// Now looking at only state fixed effects
+	xi: qui regress OwnOrLeaseComputers `var_interest' `controls' i.state, vce(cluster state)
+	estimates store state_fixed
+	
+// Looking at just time fixed effects 
+	xi: qui regress OwnOrLeaseComputers `var_interest' `controls' ib2001.year, vce(cluster state) // 2001 as the base year 
+	estimates store year_fixed
+	
+// The full twfe model 
 	xi: qui regress OwnOrLeaseComputers `var_interest' `controls' i.state ib2001.year, vce(cluster state)
-	estimates store naive
+	estimates store twfe
 
-	esttab naive, keep(`var_interest') stats (r2 N)	
-	outreg2 using "basic_regression_results", word excel replace
+// exporting the results 
+	esttab OLS state_fixed year_fixed twfe, keep(`var_interest') stats (r2 N)	
+	outreg2 [OLS state_fixed year_fixed twfe] using "Results\twfe_regression_results", word excel replace
 ********************************************************************************
 * 2. Second model - Event Study 
 ********************************************************************************
