@@ -40,3 +40,21 @@ di c(hostname)
 // Saving graph 
 	graph save "Charts\Avg_prop_by_year.png", replace
 // 2001 is where the 50% mark is, so likely use 2001 as base year 
+
+********************************************************************************
+* 2. Looking at total % change for ownorlease and total operations
+********************************************************************************
+// aggregate both variables
+	egen avg_OwnOrLeaseComputers = mean(OwnOrLeaseComputers), by(year)
+	egen avg_TotalOperations = mean(TotalOperations), by(year)
+	
+// Trimming 
+	keep if state == "AL"
+	keep if year == 1997 | year == 2022 //2022 is last non-imputed value of total ops, so more accurate
+	
+// Calculating percent change for both vars
+	gen delta_own = (avg_OwnOrLeaseComputers[2]-avg_OwnOrLeaseComputers[1]) // since already a %, just need new - old
+	// own or lease increased by 38% on average
+	
+	gen delta_ops = (avg_TotalOperations[2]-avg_TotalOperations[1])/avg_TotalOperations[1] * 100
+	// total operations dropped by 17% on average 
