@@ -121,7 +121,7 @@
 		InternetAccess_2014   = "24" ) ///
 		omitted baselevels	///
 		order(`internet') title(Effect of Internet Access Across Time) ///
-		xtitle(Event Year) ytitle(Proportion of Respondent Adopting)
+		xtitle(Event Year) ytitle(Marginal Effect)
 	graph export "Charts\ES_InternetAccess", as (jpg) quality(100) replace
 		
 			local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI `bin_age'"
