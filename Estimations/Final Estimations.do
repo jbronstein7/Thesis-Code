@@ -99,84 +99,57 @@
 ********************************************************************************
 * 3. Charting the coefficients 
 ********************************************************************************
-// Internet Access 
-// Creating a local 
-	local internet "InternetAccess_*"
-	
-	coefplot event_study, recast(connected)  keep(`internet') ///
-		ciopts(recast(rarea) color(emerald%25)) vertical  ///
-		coeflabels(InternetAccess_1997 = "-4" InternetAccess_1998 = "-3" ///
-		InternetAccess_1999 = "-2" InternetAccess_2000 = "-1" ///
-		InternetAccess_2001   = "0" ///
-		InternetAccess_2002   = "1" ///
-		InternetAccess_2003   = "2" ///
-		InternetAccess_2004   = "3" ///
-		InternetAccess_2005   = "4" ///
-		InternetAccess_2006   = "5" ///
-		InternetAccess_2007   = "6" ///
-		InternetAccess_2008   = "7" ///
-		InternetAccess_2009   = "8" ///
-		InternetAccess_2010   = "9" ///
-		InternetAccess_2011   = "10" ///
-		InternetAccess_2012   = "11" ///
-		InternetAccess_2013   = "12" ///
-		InternetAccess_2014   = "13" ///
-		InternetAccess_2015   = "14" ///
-		InternetAccess_2016   = "15" ///
-		InternetAccess_2017   = "16" ///
-		InternetAccess_2018   = "17" ///
-		InternetAccess_2019   = "18" ///
-		InternetAccess_2020   = "19" ///
-		InternetAccess_2021   = "20" ///
-		InternetAccess_2022   = "21" ///
-		InternetAccess_2023   = "22" ///
-		InternetAccess_2013   = "23" ///
-		InternetAccess_2014   = "24" ) ///
-		omitted baselevels	///
-		order(`internet') title(Effect of Internet Access Across Time) ///
-		xtitle(Event Year) ytitle(Marginal Effect)
-	graph export "C:\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data\Charts\ES_InternetAccess.gph", as(jpg) name("Graph") quality(100) replace
+// Looping to generate coefficient charts for each of the key variables 
 
-		*************************************************************WORKING*****************************************************************************************************************************
-			local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI `bin_age'"
+	local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI prop25_34 prop35_44 prop45_54 prop65_74 propGE_75"
 	// variables mentioned as singificant in the literaure 
 	
 	foreach x in `var_interest'{
-			local ``x'' "`x'_*"
+		local y "`x'_*"
 	
-			coefplot event_study, recast(connected)  keep(``x'') ///
-				ciopts(recast(rarea) color(emerald%25)) vertical  ///
-					coeflabels(``x''_1997 = "-4" ``x''_1998 = "-3" ///
-					``x''_1999 = "-2" ``x''_2000 = "-1" ///
-					_Istate_6   = "0" ///
-					``x''_2002   = "1" ///
-					``x''_2003   = "2" ///
-					``x''_2004   = "3" ///
-					``x''_2005   = "4" ///
-					``x''_2006   = "5" ///
-					``x''_2007   = "6" ///
-					``x''_2008   = "7" ///
-					``x''_2009   = "8" ///
-					``x''_2010   = "9" ///
-					``x''_2011   = "10" ///
-					``x''_2012   = "11" ///
-					``x''_2013   = "12" ///
-					``x''_2014   = "13" ///
-					``x''_2015   = "14" ///
-					``x''_2016   = "15" ///
-					``x''_2017   = "16" ///
-					``x''_2018   = "17" ///
-					``x''_2019   = "18" ///
-					``x''_2020   = "19" ///
-					``x''_2021   = "20" ///
-					``x''_2022   = "21" ///
-					``x''_2023   = "22" ///
-					``x''_2013   = "23" ///
-					``x''_2014   = "24" ) ///
+	coefplot event_study, recast(connected)  keep(`y') ///
+		ciopts(recast(rarea) color(emerald%25)) vertical  ///
+		coeflabels(`x'_1997 = "97" `x'_1998 = "98" ///
+		`x'_1999 = "99" `x'_2000 = "00" ///
+		`x'_2001   = "01" ///
+		`x'_2002   = "02" ///
+		`x'_2003   = "03" ///
+		`x'_2004   = "04" ///
+		`x'_2005   = "05" ///
+		`x'_2006   = "06" ///
+		`x'_2007   = "07" ///
+		`x'_2008   = "08" ///
+		`x'_2009   = "09" ///
+		`x'_2010   = "10" ///
+		`x'_2011   = "11" ///
+		`x'_2012   = "12" ///
+		`x'_2013   = "13" ///
+		`x'_2014   = "14" ///
+		`x'_2015   = "15" ///
+		`x'_2016   = "16" ///
+		`x'_2017   = "17" ///
+		`x'_2018   = "18" ///
+		`x'_2019   = "19" ///
+		`x'_2020   = "20" ///
+		`x'_2021   = "21" ///
+		`x'_2022   = "22" ///
+		`x'_2023   = "23" ///
+		) ///
+		omitted baselevels	///
+		order(`y') title(Effect of `x' Across Time) ///
+		xtitle(Event Year) ytitle(Marginal Effect)
 
-					omitted baselevels	///
-					order(``x'') title(Effect of `x' Across Time) ///
-
-					xtitle(Event Year) ytitle(Proportion of Respondent Adopting)
-			graph export "Charts\ES_`x'", as (jpg) quality(100) replace
+	graph export "C:\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data\Charts\ES_`x'.png", as(png) name("Graph") replace
 		}
+		
+********************************************************************************
+* 3. Generating Scatter Plots For Dairy Farms 
+********************************************************************************
+// Want to look at just 1997 and 2022, comparing start to end  (excl. 2023, because all of those values are imputed)
+	keep if year == 1997 | year == 2022
+	sort year
+	keep state year OwnOrLeaseComputers prop_dairy
+	drop if OwnOrLeaseComputers == .
+	drop if state == "US"
+	
+// Copying to excel to create scatter plots 
