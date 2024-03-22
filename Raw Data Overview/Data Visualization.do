@@ -2,7 +2,7 @@
 *
 * Title: Data Visualization
 * Authors: April Athnos & Joe Bronstein
-* Last Updated: 10-29-2023
+* Last Updated: 3-22-2024
 * Objective: To effectively visualize aggregated data
 * Assumes: Data Arranging do file has already been run
 **************************************************************************
@@ -110,7 +110,7 @@ di c(hostname)
 // copied data to excel file to finish graphing, see average own or lease by region.xlsx
 
 ********************************************************************************
-* 2 - Graphing change in CPI
+* 3 - Graphing change in CPI
 ********************************************************************************
 use "Clean(ish) Datasets\merged_all_imputed.dta", clear
 
@@ -118,3 +118,21 @@ use "Clean(ish) Datasets\merged_all_imputed.dta", clear
 	keep if state == "AL" // same for every state, so doesn't matter, just need '97-'23
 	keep year CompCPI
 // Now using excel to graph, see cpi.xlsx
+
+********************************************************************************
+* 4 - Graphing change in internet access 
+********************************************************************************
+	use "Clean(ish) Datasets\merged_all_imputed.dta", clear
+
+
+// local list
+	local region "West South Midwest Northeast"
+	
+// generating aggregated variables for each region
+	foreach x in `region' {
+		egen avg_`x'_Internet = mean(InternetAccess) if region == "`x'", by (year) 
+	}
+	
+// trimming dataset
+	keep year avg_West_Internet avg_South_Internet avg_Midwest_Internet avg_Northeast_Internet
+// copied data to excel file to finish graphing, see internet access over time.xlsx
