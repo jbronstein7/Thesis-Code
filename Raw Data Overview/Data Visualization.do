@@ -2,7 +2,7 @@
 *
 * Title: Data Visualization
 * Authors: April Athnos & Joe Bronstein
-* Last Updated: 3-22-2024
+* Last Updated: 3-27-2024
 * Objective: To effectively visualize aggregated data
 * Assumes: Data Arranging do file has already been run
 **************************************************************************
@@ -112,7 +112,7 @@ di c(hostname)
 ********************************************************************************
 * 3 - Graphing change in CPI
 ********************************************************************************
-use "Clean(ish) Datasets\merged_all_imputed.dta", clear
+	use "Clean(ish) Datasets\merged_all_imputed.dta", clear
 
 // getting the cpi by year 
 	keep if state == "AL" // same for every state, so doesn't matter, just need '97-'23
@@ -136,3 +136,29 @@ use "Clean(ish) Datasets\merged_all_imputed.dta", clear
 // trimming dataset
 	keep year avg_West_Internet avg_South_Internet avg_Midwest_Internet avg_Northeast_Internet
 // copied data to excel file to finish graphing, see internet access over time.xlsx
+
+********************************************************************************
+* 5 - Solve for number who own or lease (% OwnOrLease * Total Operations)
+********************************************************************************
+	use "Clean(ish) Datasets\merged_all_imputed.dta", clear
+
+// Aggregating total operations and % own or lease
+	local important "OwnOrLeaseComputers TotalOperations"
+	
+	foreach x in `important'{
+			egen avg_`x' = mean(`x'), by (year)
+	}
+	
+// keeping only one time series of observations 
+	keep if state == "AL"
+	keep year avg_OwnOrLeaseComputers avg_TotalOperations
+	
+// Scale OwnOrLease to be between 0 and 1 (%)
+	gen avg_OwnOrLeaseComputers_sca = avg_OwnOrLeaseComputers/100
+	drop avg_OwnOrLeaseComputers
+	
+// Now calculating num own or lease 
+	gen num_OwnOrLease = avg_OwnOrLeaseComputers_sca * avg_TotalOperations
+	drop avg_TotalOperations avg_OwnOrLeaseComputers_sca
+	
+// export to excel to graph 
