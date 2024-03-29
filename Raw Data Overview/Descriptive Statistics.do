@@ -58,3 +58,39 @@ di c(hostname)
 	
 	gen delta_ops = (avg_TotalOperations[2]-avg_TotalOperations[1])/avg_TotalOperations[1] * 100
 	// total operations dropped by 17% on average 
+	
+********************************************************************************
+* 2. Looking at change in numerator of dep. var. (count of own or lease)
+********************************************************************************
+log using "t-test of count own or lease"
+	use "Clean(ish) Datasets\merged_all_imputed.dta", clear
+
+// Aggregating total operations and % own or lease
+// 	local important "OwnOrLeaseComputers TotalOperations"
+//	
+// 	foreach x in `important'{
+// 			egen avg_`x' = mean(`x'), by (year)
+// 	}
+//	
+// keeping only one time series of observations 
+	keep if year == 2022 | year == 1997  // 2022 is last observed data for total ops, so more accurate than 2023
+	keep year OwnOrLeaseComputers TotalOperations
+	
+// Scale OwnOrLease to be between 0 and 1 (%)
+	gen OwnOrLeaseComputers_sca = OwnOrLeaseComputers/100
+	drop OwnOrLeaseComputers
+	
+// Now calculating num own or lease 
+	gen num_OwnOrLease = OwnOrLeaseComputers_sca * TotalOperations
+	drop TotalOperations OwnOrLeaseComputers_sca
+	
+// Test for statistical difference in means in 1997 and 2022
+// new variables for count in 1997 and count in 2022
+	local year "1997 2022"
+	foreach x in `year'{
+		gen num_OwnOrLease_`x' = num_OwnOrLease if year == `x'
+	}
+	
+// t-test between 2 groups 
+	ttest num_OwnOrLease, by (year) //p-value of 0.018, so there is a significant difference
+log close 
