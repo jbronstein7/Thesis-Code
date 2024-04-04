@@ -1,80 +1,4 @@
 ********************************************************************************
-* Title: Final Estimations
-* Author: Joe Bronstein
-*		  April Athnos
-* Purpose: To estimate final models for paper/presentation
-*		   To investigate the shapes of the event study output
-* Last Modified: 3/28/2024
-* Assumes: All other data arranging files have been run, and imputed dataset is available 
-********************************************************************************
-	di c(hostname) 
-
-		if "`c(hostname)'" == "AREC-ATHNOS" {
-				cd "\Users\athnos\OneDrive - University of Arizona\Advising\Joe Bronstein"
-				}
-
-
-		if "`c(hostname)'" == "JBRON-DESKTOP" {
-				cd "\Users\jbron\OneDrive - University of Arizona\Documents\School\Thesis\Raw Data"
-				}
-
-// Installing required packages
-/*
-	ssc install estout	
-	ssc install outreg2
-	ssc install coefplot
-*/
-
-********************************************************************************
-* 0. Loading in cleaned, imputed dataset, and creating local lists 
-********************************************************************************
-// use cleaned imputed dataset
-	use "clean(ish) datasets\merged_all_imputed.dta", clear 
-	
-// dropping 2023 
-	drop if year == 2023 // comment out if want to see results with 2023
-	// 47 obs deleted
-	
-// Creating local lists for key variables 
-	local bin_age "prop25_34 prop35_44 prop45_54 prop65_74 propGE_75"
-	// Using the 55 to 64 age group as baseline, since that encompasses the avg. age 
-	
-	local ethnicity "prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific"
-	// Using prop_white as baseline 
-	
-	local controls "prop_crop avg_hhsize prop_poultry prop_OffFarm `ethnicity'"
-	// Variables that seem important to control for, but were not mentioned as determinants of adoption in the literature 
-	
-	local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI age"
-	// variables mentioned as singificant in the literaure 
-
-********************************************************************************
-* 1. TWFE - Comparing 4 models
-********************************************************************************
-log using "twfe model 2022", replace
-// Starting with a basic OLS model, no fixed effects
-	xi: qui regress OwnOrLeaseComputers `var_interest' `controls', vce(cluster state)
-	estimates store OLS
-	
-// Now looking at only state fixed effects
-	xi: qui regress OwnOrLeaseComputers `var_interest' `controls' i.state, vce(cluster state)
-	estimates store state_fixed
-	
-// Looking at just time fixed effects 
-	xi: qui regress OwnOrLeaseComputers `var_interest' `controls' ib2001.year, vce(cluster state) // 2001 as the base year 
-	estimates store year_fixed
-	
-// The full twfe model 
-	xi: qui regress OwnOrLeaseComputers `var_interest' `controls' i.state ib2001.year, vce(cluster state)
-	estimates store twfe
-
-// exporting the results 
-	esttab OLS state_fixed year_fixed twfe, keep(`var_interest') stats (r2 N)	
-	outreg2 [OLS state_fixed year_fixed twfe] using "Results\twfe_results_22", word excel replace
-
-	capture log close
-	
-********************************************************************************
 * 2. Second model - Event Study 
 ********************************************************************************
 log using "event study 2022", replace	
@@ -99,7 +23,7 @@ log using "event study 2022", replace
 	local acres_decomp "acres_per_oper_1997	acres_per_oper_1998	acres_per_oper_1999	acres_per_oper_2000		acres_per_oper_2002	acres_per_oper_2003	acres_per_oper_2004	acres_per_oper_2005	acres_per_oper_2006	acres_per_oper_2007	acres_per_oper_2008	acres_per_oper_2009	acres_per_oper_2010	acres_per_oper_2011	acres_per_oper_2012	acres_per_oper_2013	acres_per_oper_2014	acres_per_oper_2015	acres_per_oper_2016	acres_per_oper_2017	acres_per_oper_2018	acres_per_oper_2019	acres_per_oper_2020	acres_per_oper_2021	acres_per_oper_2022"
 	local income_decomp "IncomePerOperation_1997	IncomePerOperation_1998	IncomePerOperation_1999	IncomePerOperation_2000		IncomePerOperation_2002	IncomePerOperation_2003	IncomePerOperation_2004	IncomePerOperation_2005	IncomePerOperation_2006	IncomePerOperation_2007	IncomePerOperation_2008	IncomePerOperation_2009	IncomePerOperation_2010	IncomePerOperation_2011	IncomePerOperation_2012	IncomePerOperation_2013	IncomePerOperation_2014	IncomePerOperation_2015	IncomePerOperation_2016	IncomePerOperation_2017	IncomePerOperation_2018	IncomePerOperation_2019	IncomePerOperation_2020	IncomePerOperation_2021	IncomePerOperation_2022"
 	
-	local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI age"
+	local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI year age"
 	
 	// Internet
 	xi: regress OwnOrLeaseComputers  `controls' `var_interest' `internet_decomp'  `year' i.state, vce(cluster state)
@@ -186,15 +110,3 @@ log using "event study 2022", replace
 exit
 
 		
-		
-********************************************************************************
-* 3. Generating Scatter Plots For Dairy Farms 
-********************************************************************************
-// Want to look at just 1997 and 2022, comparing start to end  (excl. 2023, because all of those values are imputed)
-	keep if year == 1997 | year == 2022
-	sort year
-	keep state year OwnOrLeaseComputers prop_dairy
-	drop if OwnOrLeaseComputers == .
-	drop if state == "US"
-	
-// Copying to excel to create scatter plots 

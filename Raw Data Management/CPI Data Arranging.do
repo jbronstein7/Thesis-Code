@@ -39,8 +39,8 @@
 			drop SeriesID
 			keep if Period == "M06"
 			
-		// Changing base to 1997
-			gen rebased_CPI = (Value / Value[1]) * 100
+		// Changing base to 2001
+			gen rebased_CPI = (Value / Value[5]) * 100
 			drop Value
 			rename rebased_CPI `x'CPI
 			
@@ -79,8 +79,8 @@
 // Adding year variable for merging later on
 	gen year = year(date)
 	
-// Re-basing CPI to 1997 for consistency
-	gen rebase = (CompCPI / CompCPI[1]) * 100
+// Re-basing CPI to 2001 for consistency
+	gen rebase = (CompCPI / CompCPI[5]) * 100
 	
 // Dropping and ordering variables 
 	drop CompCPI
