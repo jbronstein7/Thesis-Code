@@ -81,10 +81,10 @@
 	gen prop65_74 = (count65_74 / sum_of_counts) * 100
 	gen propGE_75 = (countGE_75 / sum_of_counts) * 100
 
-// Only keeping variables we care about 
-	keep state year prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75
-	sort state year
 
+	sort state year
+	drop sum_of_counts
+	
 // Convert 0's to missing's
 	replace prop25_34 = . if prop25_34 == 0
 	replace prop35_44 = . if prop35_44 == 0
@@ -92,6 +92,9 @@
 	replace prop55_64 = . if prop55_64 == 0
 	replace prop65_74 = . if prop65_74 == 0
 	replace propGE_75 = . if propGE_75 == 0
+	
+	replace count65_74 = . if count65_74 == 0
+	replace countGE_75 = . if countGE_75 == 0
 
 // Labelling
 	label variable prop25_34 "Proportion of farmers in the 25-34 age range"

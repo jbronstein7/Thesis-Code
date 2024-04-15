@@ -1,5 +1,4 @@
 **************************************************************************
-*
 * Title: Data Visualization
 * Authors: April Athnos & Joe Bronstein
 * Last Updated: 3-27-2024
@@ -162,3 +161,21 @@ di c(hostname)
 	drop avg_TotalOperations avg_OwnOrLeaseComputers_sca
 	
 // export to excel to graph 
+
+********************************************************************************
+* 6 - Looking at how age bins change across time
+********************************************************************************
+	use "Clean(ish) Datasets\merged_all_imputed.dta", clear
+	
+// Calculating averages for each age bin
+	local bin "prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75"
+		foreach x in `bin'{
+			egen avg_`x' = mean(`x'), by (year)
+		}
+		
+// trimming the data for graphing purposes 
+	keep if state == "AL"
+	keep if year == 2023 | year == 2022 | year == 1997
+	keep year avg_prop25_34 avg_prop35_44 avg_prop45_54 avg_prop55_64 avg_prop65_74 avg_propGE_75
+	
+// moving to excel to graph

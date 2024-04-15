@@ -28,7 +28,7 @@
 	sort state year
 	
 // Identifying variables to impute 
-	local missings TotalAcres age NumCrop NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White prop_Male prop_Female prop_crop prop_dairy acres_per_oper prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 avg_hhsize
+	local missings TotalAcres age NumCrop NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience prop_Asian prop_AfricanAmerican prop_Hispanic prop_Multi prop_Pacific prop_White prop_Male prop_Female prop_crop prop_dairy acres_per_oper prop25_34 prop35_44 prop45_54 prop55_64 prop65_74 propGE_75 avg_hhsize count25_34 count35_44 count45_54 count55_64 
 
 // Creating a loop to impute missings
 	foreach x in `missings'{
@@ -108,7 +108,7 @@ save "merged_all_imputed.dta", replace
 	save "merged_all_imputed.dta", replace
 
 // Creating locals 
-	local missings "TotalAcres age NumCrop DairyOperations NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience prop65_74 propGE_75" 
+	local missings "TotalAcres age NumCrop DairyOperations NumAsian NumAfricanAmerican NumHispanic NumMulti NumPacific NumWhite NumMale NumFemale IncomePerOperation NumOffFarm TotalOperations NumPoultry HouseholdSize Experience count65_74 countGE_75" 
 	local states "AL AR AZ CA CO CT DE FL GA IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA SC SD TN TX UT VA VT WA WI WV WY"
 
 // Imputing by mssings by state
@@ -180,4 +180,20 @@ save "merged_all_imputed.dta", replace
 	gen prop_OffFarm = (NumOffFarm / TotalOperations) * 100
 	label variable prop_OffFarm "Proportion of Farmers who have off-farm as primary employment"
 	
+	
+// for binned age groups 
+// Creating total variable
+	gen sum_of_counts = count25_34 + count35_44 + count45_54 + count55_64 + count65_74 + countGE_75 
+	
+// Now dividing count variables by total operations 
+	replace prop25_34 = (count25_34 / sum_of_counts) * 100
+	replace prop35_44 = (count35_44 / sum_of_counts) * 100
+	replace prop45_54 = (count45_54 / sum_of_counts) * 100
+	replace prop55_64 = (count55_64 / sum_of_counts) * 100
+	replace prop65_74 = (count65_74 / sum_of_counts) * 100
+	replace propGE_75 = (countGE_75 / sum_of_counts) * 100
+
+	drop sum_of_counts
+
+
 	save "merged_all_imputed.dta", replace 	

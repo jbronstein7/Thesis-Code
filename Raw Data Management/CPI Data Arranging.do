@@ -34,15 +34,15 @@
 		// Import the excel file 
 			import excel using "Other Raw Data/`x'_CPI_Raw.xlsx", firstrow
 		
+		// Rebasing to december 1997 to have same base for both 
+			gen rebased_CPI = Value/Value[12] * 100
+			drop Value
+			rename rebased_CPI `x'CPI
+		
 		// Drop series ID variable and keep only June months (match June ag survey)
 			rename Year year
 			drop SeriesID
 			keep if Period == "M06"
-			
-		// Not rebasing 
-			gen rebased_CPI = Value
-			drop Value
-			rename rebased_CPI `x'CPI
 			
 		// Save file in stata format
 			save "Clean(ish) Datasets/`x'_CPI_Clean.dta", replace 

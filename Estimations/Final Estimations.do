@@ -102,40 +102,40 @@ log using "event study 2022", replace
 	local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI age"
 	
 	// Internet
-	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper prop_Female IncomePerOperation AdjCompCPI age `controls' `internet_decomp'  `year' i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper prop_Female IncomePerOperation AdjCompCPI age `controls' `internet_decomp'   i.state, vce(cluster state)
 		estimates store es_InternetAccess
-		esttab es_InternetAccess, drop(`controls' _Istate_* year_*) stats (r2 N)	
-			outreg2 using "Results\esInt_results_22", word excel replace
+		*esttab es_InternetAccess, drop(`controls' _Istate_* year_*) stats (r2 N)	
+			*outreg2 using "Results\esInt_results_22", word excel replace
 	// Age 	
-	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI `controls' `age_decomp'  `year' i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI `controls' `age_decomp'   i.state, vce(cluster state)
 		estimates store es_age
-		esttab es_age, drop(`controls' _Istate_* year_*) stats (r2 N)	
-			outreg2 using "Results\esAge_results_22", word excel replace
+		*esttab es_age, drop(`controls' _Istate_* year_*) stats (r2 N)	
+			*outreg2 using "Results\esAge_results_22", word excel replace
 	// Gender
-	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper InternetAccess IncomePerOperation AdjCompCPI age `controls' `gender_decomp'  `year' i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper InternetAccess IncomePerOperation AdjCompCPI age `controls' `gender_decomp'  i.state, vce(cluster state)
 		estimates store es_prop_Female
-		esttab es_prop_Female, drop(`controls' _Istate_* year_*) stats (r2 N)	
-			outreg2 using "Results\esFem_results_22", word excel replace
+		*esttab es_prop_Female, drop(`controls' _Istate_* year_*) stats (r2 N)	
+			*outreg2 using "Results\esFem_results_22", word excel replace
 	// Dairy
-	xi: regress OwnOrLeaseComputers acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI age `controls' `prop_dairy_decomp'  `year' i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI age `controls' `prop_dairy_decomp'  i.state, vce(cluster state)
 		estimates store es_prop_dairy
-		esttab es_prop_dairy, drop(`controls' _Istate_* year_*) stats (r2 N)	
-			outreg2 using "Results\esDairy_results_22", word excel replace
+		*esttab es_prop_dairy, drop(`controls' _Istate_* year_*) stats (r2 N)	
+			*outreg2 using "Results\esDairy_results_22", word excel replace
 	// CPI
-	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation age `controls' `CPI_decomp'  `year' i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers  prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation age `controls' `CPI_decomp'  i.state, vce(cluster state)
 		estimates store es_AdjCompCPI
-	esttab es_AdjCompCPI, drop(`controls' _Istate_* year_*) stats (r2 N)	
-			outreg2 using "Results\esCPI_results_22", word excel replace
+	*esttab es_AdjCompCPI, drop(`controls' _Istate_* year_*) stats (r2 N)	
+			*outreg2 using "Results\esCPI_results_22", word excel replace
 	// Acres
-	xi: regress OwnOrLeaseComputers prop_dairy prop_Female InternetAccess IncomePerOperation AdjCompCPI age  `controls' `acres_decomp'  `year' i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers prop_dairy prop_Female InternetAccess IncomePerOperation AdjCompCPI age  `controls' `acres_decomp'  i.state, vce(cluster state)
 		estimates store es_acres_per_oper
-		esttab es_acres_per_oper, drop(`controls' _Istate_* year_*) stats (r2 N)	
-			outreg2 using "Results\esAcres_results_22", word excel replace
+		*esttab es_acres_per_oper, drop(`controls' _Istate_* year_*) stats (r2 N)	
+			*outreg2 using "Results\esAcres_results_22", word excel replace
 	// Income
-	xi: regress OwnOrLeaseComputers prop_dairy acres_per_oper prop_Female InternetAccess AdjCompCPI age `controls' `income_decomp'  `year' i.state, vce(cluster state)
+	xi: regress OwnOrLeaseComputers prop_dairy acres_per_oper prop_Female InternetAccess AdjCompCPI age `controls' `income_decomp'  i.state, vce(cluster state)
 		estimates store es_IncomePerOperation
-	esttab es_IncomePerOperation, drop(`controls' _Istate_* year_*) stats (r2 N)	
-			outreg2 using "Results\esInc_results_22", word excel replace
+	*esttab es_IncomePerOperation, drop(`controls' _Istate_* year_*) stats (r2 N)	
+			*outreg2 using "Results\esInc_results_22", word excel replace
 
 	
 ********************************************************************************
