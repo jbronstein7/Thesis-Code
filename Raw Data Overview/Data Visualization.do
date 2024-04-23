@@ -175,7 +175,26 @@ di c(hostname)
 		
 // trimming the data for graphing purposes 
 	keep if state == "AL"
-	keep if year == 2023 | year == 2022 | year == 1997
+	keep if year == 2022 | year == 1997
 	keep year avg_prop25_34 avg_prop35_44 avg_prop45_54 avg_prop55_64 avg_prop65_74 avg_propGE_75
 	
+// moving to excel to graph
+
+********************************************************************************
+* 7 - Which states have most/least computers?
+********************************************************************************
+		use "Clean(ish) Datasets\merged_all_imputed.dta", clear
+		
+// keeping only 2023 and 1997
+	keep if year == 2023 | year == 1997
+	
+// Only keeping certain variables
+	keep state year OwnOrLeaseComputers
+	
+// drop missings 
+	drop if OwnOrLeaseComputers == .
+	// 14 dropped 
+	
+// sort by year 
+	sort year 
 // moving to excel to graph
