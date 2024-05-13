@@ -2,7 +2,7 @@
 * Title: Descriptive Statistics
 * Author: Joe Bronstein
 * Purpose: To generate descriptive statistics tables and charts   
-* Last Modified: 3/27/2024
+* Last Modified: 4/29/2024
 * Assumes: All other data arranging files have been run, and imputed dataset is available 
 ********************************************************************************
 di c(hostname) 
@@ -94,3 +94,17 @@ log using "t-test of count own or lease"
 // t-test between 2 groups 
 	ttest num_OwnOrLease, by (year) //p-value of 0.018, so there is a significant difference
 log close 
+
+********************************************************************************
+* 3. Generating C.V.'s for variables of interest 
+********************************************************************************
+	use "clean(ish) datasets\merged_all_imputed.dta", clear 
+	drop if year == 2023
+	drop if OwnOrLeaseComputers == .
+// Creating local for important variables 
+	local var_interest "prop_dairy acres_per_oper prop_Female InternetAccess IncomePerOperation AdjCompCPI age"
+
+// Looping to calculate CV for each variable
+	foreach x in `var_interest' {
+	summarize `x'
+	}
